@@ -1,4 +1,3 @@
-import subprocess
 import os
 
 def ReadConfig(config):
@@ -20,18 +19,22 @@ def ReadConfig(config):
     configFile.close()
 
 
-def ReadLists(config, vidsList, mp3List):
+def ReadLists(config, vidsList, mp3List, clipsList):
     # Check which files we already scanned. We store them in 2 dat files, 'vids.dat', 'mp3.dat'
     vidsDat = open("vids.dat", "r")
     mp3Dat  = open("mp3.dat", "r")
+    clipsDat = open("clips.dat", "r")
     vidsContent = vidsDat.read()
     mp3Content = mp3Dat.read()
+    clipsContent = clipsDat.read()
+
     # Now we should have the content of both files
     # Splitting up content into lines
     vidsLines = vidsContent.split("\n")
     mp3Lines = mp3Content.split("\n")
-    # Processing the vids file content. File name and render-number is separated by TAB
+    clipsLines = clipsContent.split("\n")
     if (len(vidsList) > 0 and len(mp3Lines) > 0):
+        # Processing the vids file content. File name and render-number is separated by TAB
         for line in vidsLines:
             vidsList[line.split("\t")[0]] = line.split("\t")[1]
         # Processing the mp3 file content. File name and render-number is separated by TAB
@@ -40,9 +43,15 @@ def ReadLists(config, vidsList, mp3List):
     else:
         print("dat files are still empty")
 
-    # At this point, we should have the file contents stored in 2 dictionaries
+    if (len(clipsList) > 0):
+        # Processing the clips file content. File name and name of mp3 is separated by TAB
+        for line in clipsLines:
+            clipsList[line.split("\t")[0]] = line.split("\t")[1]
+
+    # At this point, we should have the file contents stored in 3 dictionaries
     vidsDat.close()
     mp3Dat.close()
+    clipsDat.close()
 
 
 def CheckNewFiles(config, vidsList, mp3List):
@@ -66,7 +75,7 @@ def CheckNewFiles(config, vidsList, mp3List):
     for entry in currentVids:
         if entry in vidsList:
             # We don't need to do anything, file already is on our list
-            print("Do nothing...")
+            continue
         else:
             # New video has been rendered 0 times in clips
             vidsList[entry] = 0
@@ -80,7 +89,7 @@ def CheckNewFiles(config, vidsList, mp3List):
     for entry in currentMp3:
         if entry in mp3List:
             # We don't need to do anything, file already is on our list
-            print("Do nothing...")
+            continue
         else:
             # New video has been rendered 0 times in clips
             mp3List[entry] = 0
@@ -96,14 +105,3 @@ def CheckNewFiles(config, vidsList, mp3List):
         mp3Dat.close()
     if isVidsFileOpen:
         vidsDat.close()
-
-def StartClip():
-    # Check if previous clip is still running
-    # We assume that clip finished by duration
-    # There should be another method beside that, because of possible lag
-    subprocess.run(["ffmpeg", "-version"])
-
-def CreateClip():
-    # Video editing
-    # Possibly not with ffmpeg
-    subprocess.run(["echo", "\n\n... video editing ..."])

@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#Dat files that are environment specific config files
+config.conf
+vids.dat
+mp3.dat
+clips.dat
