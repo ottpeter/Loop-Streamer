@@ -95,12 +95,15 @@ def CreateClip(config, vidsList, mp3List, clipsList):
         if img.endswith(".jpg") or img.endswith(".png") or img.endswith(".jpeg") or img.endswith(".png") or img.endswith(".PNG"):
             print("img: ", img)
             myImgClip = ImageClip(img)
-            myImgClip.duration = 10
-            print(myImgClip.duration)
-            myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
+            # Set duration
+            myImgClip.duration = int(slideLen)
+            newpath = "./temp_img_clips/" + str(i) + ".mp4"
+            # Start rendering
+            myImgClip.write_videofile(newpath, fps, preset="fast")
             #myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
+            # Replace the path in the selectedVids array
+            selectedVids[selectedVids.index(img)] = newpath
             i += 1
-
     # Create the clip
     index = 0
     while allVidsDuration > 0:
