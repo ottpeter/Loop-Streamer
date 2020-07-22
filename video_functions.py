@@ -12,15 +12,15 @@ def StartClip(config, clipsList):
     # If there are no rendered videos yet, we can't stream anything
     if len(clipsList) == 0:
         print("There are no rendered clips yet")
-        return 0
+        return 1
 
-    subprocess.run(["ffmpeg", "-version"])
+    # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
+    #subprocess.run(["ffmpeg", "-version"])
+    # We don't know if every parameter is an element in the array, or every word
+    subprocess.run((["ffmpeg", "-re", "-i", clipsList[config["next_clip_to_play"]], "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
 
-
+# Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
-    # Video editing
-    # Possibly not with ffmpeg
-    subprocess.run(["echo", "\n\n... video editing ..."])
     # If render is successful, we increment render count for all participating elements
     isRenderSuccessful = False
     # We need mp3 duration for the selection of vids
@@ -37,15 +37,18 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     os.environ["IMAGEIO_FFMPEG_EXE"] = config["ffmpeg_path"]
     # Set FPS
     fps = 25
+    # Can be ultrafast / superfast / veryfast / faster / fast / medium / slow / slower / veryslow /placebo
+    # According to write_videofile docs, this will affect file size, but not quality (faster rendering ~ larger size)
+    preset = config["preset"]
+    # Number of threads to use (when rendering final video)
+    threads = config["threads"]
 
-    # Select an mp3 with lowest render count. #Initial value is max int.
-    #lowestRenderCount = 2147483646
     # Lowest number starts at first entry
     lowestRenderCount = list(mp3List.values())[0]
     for entry in mp3List:
         if mp3List[entry] < lowestRenderCount:
             selectedMp3 = entry
-        if mp3List[entry] == 0:
+        elif mp3List[entry] == 0:
             # Value can't be lower than this, this is a new entry
             selectedMp3 = entry
             break
@@ -63,6 +66,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
         print("fill the clip")
 
         # Set the complete file path
+        print("index", index)
         currentFile = config["vids_path"] + vidsSortedArray[index][0]
         # Supported image extension: .jpg, .jpeg, .png, .JPG, .PNG
         if currentFile.endswith(".jpg") or currentFile.endswith(".png") or currentFile.endswith(".jpeg") or currentFile.endswith(".png") or currentFile.endswith(".PNG"):
@@ -80,17 +84,21 @@ def CreateClip(config, vidsList, mp3List, clipsList):
         # Test
         print(currentFile + " - ", currentDuration)
 
-        if (index < len(vidsSortedArray)):
+        if (index < len(vidsSortedArray)-1):
             index += 1
         else:
             index = 0
     # After this, we should have an array of the elements that we are going to use
     print("Total duration: ", allVidsDuration)
 
+
     # Create temporary clips from the images
     i = 0
+    # Purge the temp directory (delete and recreate)
     shutil.rmtree("temp_img_clips")
     os.mkdir("./temp_img_clips")
+    # We need this, because we can't override selectedVids, we need selectedVids to increment render count in the end
+    actualPaths = selectedVids.copy()
     for img in selectedVids:
         if img.endswith(".jpg") or img.endswith(".png") or img.endswith(".jpeg") or img.endswith(".png") or img.endswith(".PNG"):
             print("img: ", img)
@@ -102,26 +110,71 @@ def CreateClip(config, vidsList, mp3List, clipsList):
             myImgClip.write_videofile(newpath, fps, preset="fast")
             #myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
             # Replace the path in the selectedVids array
-            selectedVids[selectedVids.index(img)] = newpath
+            actualPaths[actualPaths.index(img)] = newpath
             i += 1
+
+
     # Create the clip
-    index = 0
-    while allVidsDuration > 0:
-        if (index < len(selectedVids)):
-            index += 1
-        else:
-            # We should never need this
-            index = 0
-    # end
+    # I don't know what is this, probably we don't need it anymore
+    # This is not how we going to do this
+
+    # Create the final clip object
+    # We create a clip object from every path
+    # We couold have done this when processing images
+    clips = []
+    for i in range(0, len(actualPaths)):
+        clips.append(VideoFileClip(actualPaths[i], target_resolution=(1080, 1920)))
 
 
-    clip = VideoFileClip("/home/user/Downloads/vids/out.mpg", audio=False)
-    print("duration: ", clip.duration)
+    # Concatenating video clips (that are already clip objects)
+    # Without method="compose", result mp4 wouldn't play, because of different screen resolutions
+    clipWithoutAudio = concatenate_videoclips(clips, method="compose")
+    # This will cut the end. Other solution would be to decrease slideLen, for example 10 sec -> 9.2 sec, so it exacty fills the mp3
+    clipWithoutAudio.duration = mp3Duration
+    '''
+    # Create text
+    # We could get mp3 name from meta tag (if exists)
+    text = TextClip(
+        "example",
+        size="22",
+        color="black",
+        bg_color="transparent",
+        fontsize=32,
+        font="Courier",
+        align="bottom")
+    clipWithoutAudio = CompositeVideoClip(clipWithoutAudio, text)
+    '''
+    # print("selectedmp3: ", selectedMp3)
+    finalClip = clipWithoutAudio.set_audio(AudioFileClip(config["mp3_path"] + selectedMp3))
+    # print("duration: ", finalVideoClip.duration)
+    # This is the line that will actually create the mp4 file
+    finalClip.write_videofile(
+        config["clips_path"] + config["next_clip_to_create"] + ".mp4",
+        fps=fps,
+        preset="medium",
+        write_logfile=True,
+        threads=2)
+    # We could add audio by parameter
+
+    # File will probably exist if it's corrupted as well. Better method would be logs
+    # It's seems when no error, last thing in log file will be kb/s rate
+    isRenderSuccessful = os.path.isfile(config["clips_path"] + config["next_clip_to_create"] + ".mp4")
+    #isRenderSuccessful = True
 
     # Increment render counts for all elements, but only after rendering was successful
     if isRenderSuccessful:
         for element in selectedVids:
-            vidsList[element] += 1
-        mp3List[selectedMp3] += 1
-
-
+            print(type(element))
+            vidsList["night-fog-1521028-1918x1094.jpg"] = 1
+            #vidsList[element[0].rsplit("/", 1)] = vidsList.get(element[0].rsplit("/", 1), 0) + 1
+        mp3List[selectedMp3.rsplit("/", 1)] = mp3List[selectedMp3.rsplit("/", 1)] + 1
+        # Insert the new mp4 to the clips dictionary
+        clipsList[config["next_clip_to_create"] + ".mp4"] = selectedMp3
+        # Increment video counter for the ready 'clips' folder
+        config["next_clip_to_create"] = config["next_clip_to_create"] + 1
+        # Updating the config file
+        configFile = open("config.conf", "w")
+        for key in config:
+            configFile.write(key + " = " + config[key] + "\n")
+        configFile.close()
+        # The dat files also need to be updated

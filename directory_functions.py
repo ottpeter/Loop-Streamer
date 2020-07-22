@@ -33,22 +33,34 @@ def ReadLists(config, vidsList, mp3List, clipsList):
     vidsLines = vidsContent.split("\n")
     mp3Lines = mp3Content.split("\n")
     clipsLines = clipsContent.split("\n")
-    if (len(vidsList) > 0 and len(mp3Lines) > 0):
-        # Processing the vids file content. File name and render-number is separated by TAB
-        for line in vidsLines:
-            vidsList[line.split("\t")[0]] = line.split("\t")[1]
-        # Processing the mp3 file content. File name and render-number is separated by TAB
-        for line in mp3Lines:
-            mp3List[line.split("\t")[0]] = line.split("\t")[1]
-    else:
-        print("dat files are still empty")
+    # Processing the vids file content. File name and render-number is separated by TAB
+    for line in vidsLines:
+        #print("line", line.split("\t")[1])
+        if "\t" in line:
+            vidsList[line.split("\t")[0]] = int(line.split("\t")[1])
+        else:
+            print("This line is not processable (from vids.dat")
+    # Processing the mp3 file content. File name and render-number is separated by TAB
+    for line in mp3Lines:
+        if "\t" in line:
+            mp3List[line.split("\t")[0]] = int(line.split("\t")[1])
+        else:
+            print("This line is not processable (from mp3.dat")
 
-    if (len(clipsList) > 0):
-        # Processing the clips file content. File name and name of mp3 is separated by TAB
-        for line in clipsLines:
+
+
+    # Processing the clips file content. File name and name of mp3 is separated by TAB
+    for line in clipsLines:
+        if "\t" in line:
             clipsList[line.split("\t")[0]] = line.split("\t")[1]
+        else:
+            print("This line is not processable (from clips.dat")
 
     # At this point, we should have the file contents stored in 3 dictionaries
+    print("At this point, we should have the file contents stored in 3 dictionaries")
+    print("vids", vidsList)
+    print("mp3", mp3List)
+    print("clips", clipsList)
     vidsDat.close()
     mp3Dat.close()
     clipsDat.close()
@@ -70,14 +82,26 @@ def CheckNewFiles(config, vidsList, mp3List):
         mp3Dat = open("mp3.dat", "a")
         isMp3FileOpen = True
 
+    print("currentmp3: ", currentMp3)
+    print("currentVids: ", currentVids)
 
     # Decide which files are new
     for entry in currentVids:
         if entry in vidsList:
             # We don't need to do anything, file already is on our list
+            print("yes, it is there")
+            print(entry)
+            print(currentVids[currentVids.index(entry)])
             continue
         else:
             # New video has been rendered 0 times in clips
+            # I ABSOLUTLY DONT UNDERSTAND WHY THIS BRANCH ALSO RUNNING
+            # At first run, it will always think that it's not there (although the 2 var is the same...), when function runs again, it will think that it is there
+            print("no, it does not exist")
+            print("currentVids", currentVids)
+            print("vidsList", vidsList)
+            print("wtf?", entry)
+            print("wtf?", currentVids[currentVids.index(entry)])
             vidsList[entry] = 0
             # Save to file
             vidsDat.write(entry + "\t" + "0\n")

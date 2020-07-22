@@ -1,0 +1,12 @@
+vids_path = /home/user/Downloads/vids/
+mp3_path = /home/user/Downloads/mp3/
+clips_path = /home/user/Downloads/clips/
+empty_time = 0
+next_clip_to_play = 0
+next_clip_to_create = 0
+image_slideshow_length = 10
+ffmpeg_path = /usr/bin/ffmpeg
+preset = medium
+threads = 2
+clip_height = 1080
+clip_width = 1920
