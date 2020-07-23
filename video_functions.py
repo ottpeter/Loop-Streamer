@@ -22,13 +22,16 @@ def StartClip(config, clipsList):
         while True:
             # Start streaming
             subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
-                             "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "threads",
-                             str(config["play_threads"]), "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+                             "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
             # Remembering PID would be really good
             print("Starting clip: ", str(config["next_clip_to_play"]) + ".mp4")
             # ffmpeg will simply exit when done. Then we start a new stream
             # Increment next_clip_to_play
-            config["next_clip_to_play"] += 1
+            if config["next_clip_to_play"] + 1 == config["next_clip_to_create"]:
+                # We can't play mp4 that is being created
+                config["next_clip_to_play"] = 0
+            else:
+                config["next_clip_to_play"] += 1
             # Might or might not need this
             # sleep(1)
 
