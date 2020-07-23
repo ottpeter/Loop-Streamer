@@ -4,10 +4,11 @@ import shutil
 from moviepy.editor import *
 from directory_functions import *
 from time import sleep
+import datetime
 
 # This function is running in background, on another thread
 def StartClip(config, clipsList):
-    duration = 0
+    log = open("streaming.log", "a")
 
     print(len(clipsList))
     # If there are no rendered videos yet, we can't stream anything
@@ -24,7 +25,8 @@ def StartClip(config, clipsList):
             subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
                              "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
             # Remembering PID would be really good
-            print("Starting clip: ", str(config["next_clip_to_play"]) + ".mp4")
+            log.write(str(datetime.datetime.now()) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
+            log.flush()
             # ffmpeg will simply exit when done. Then we start a new stream
             # Increment next_clip_to_play
             if config["next_clip_to_play"] + 1 == config["next_clip_to_create"]:
@@ -33,8 +35,8 @@ def StartClip(config, clipsList):
             else:
                 config["next_clip_to_play"] += 1
             # Might or might not need this
-            # sleep(1)
-
+            sleep(1)
+        log.close()
 
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
