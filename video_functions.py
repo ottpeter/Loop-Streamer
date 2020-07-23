@@ -113,65 +113,65 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # Should create function SelectMp3(), SelectVids()
 
 
-    # Create temporary clips from the images
-    i = 0
-    # Purge the temp directory (delete and recreate)
-    shutil.rmtree("temp_img_clips")
-    os.mkdir("./temp_img_clips")
-    # We need this, because we can't override selectedVids, we need selectedVids to increment render count in the end
-    actualPaths = selectedVids.copy()
-    for img in selectedVids:
-        if img.endswith(".jpg") or img.endswith(".png") or img.endswith(".jpeg") or img.endswith(".png") or img.endswith(".PNG"):
-            print("img: ", img)
-            myImgClip = ImageClip(img)
-            # Set duration
-            myImgClip.duration = int(slideLen)
-            newpath = "./temp_img_clips/" + str(i) + ".mp4"
-            # Start rendering
-            myImgClip.write_videofile(newpath, fps, preset="fast")
-            #myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
-            # Replace the path in the selectedVids array
-            actualPaths[actualPaths.index(img)] = newpath
-            i += 1
-
-    # Maybe we should rethink this.
-    # Surely we need to convert images
-    # We also surely need to creat clips[] array
-    # That should be inside a function with clipsWithoutAudio, finalClip,
-    # The previous things should be another function
-    # increment render cound does not need to be in a function
-
-    # Create the final clip object
-    # We create a clip object from every path
-    # We couold have done this when processing images
-    clips = []
-    for i in range(0, len(actualPaths)):
-        clips.append(VideoFileClip(actualPaths[i], target_resolution=(1080, 1920)))
-
-
-    # Concatenating video clips (that are already clip objects)
-    # Without method="compose", result mp4 wouldn't play, because of different screen resolutions
-    clipWithoutAudio = concatenate_videoclips(clips, method="compose")
-    # This will cut the end. Other solution would be to decrease slideLen, for example 10 sec -> 9.2 sec, so it exacty fills the mp3
-    clipWithoutAudio.duration = mp3Duration
-    '''
-    # Create text
-    # We could get mp3 name from meta tag (if exists)
-    text = TextClip(
-        "example",
-        size="22",
-        color="black",
-        bg_color="transparent",
-        fontsize=32,
-        font="Courier",
-        align="bottom")
-    clipWithoutAudio = CompositeVideoClip(clipWithoutAudio, text)
-    '''
-    # print("selectedmp3: ", selectedMp3)
-    finalClip = clipWithoutAudio.set_audio(AudioFileClip(config["mp3_path"] + selectedMp3))
-    # print("duration: ", finalVideoClip.duration)
-    # This is the line that will actually create the mp4 file
     try:
+        # Create temporary clips from the images
+        i = 0
+        # Purge the temp directory (delete and recreate)
+        shutil.rmtree("temp_img_clips")
+        os.mkdir("./temp_img_clips")
+        # We need this, because we can't override selectedVids, we need selectedVids to increment render count in the end
+        actualPaths = selectedVids.copy()
+        for img in selectedVids:
+            if img.endswith(".jpg") or img.endswith(".png") or img.endswith(".jpeg") or img.endswith(
+                    ".png") or img.endswith(".PNG"):
+                print("img: ", img)
+                myImgClip = ImageClip(img)
+                # Set duration
+                myImgClip.duration = int(slideLen)
+                newpath = "./temp_img_clips/" + str(i) + ".mp4"
+                # Start rendering
+                myImgClip.write_videofile(newpath, fps, preset="fast")
+                # myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
+                # Replace the path in the selectedVids array
+                actualPaths[actualPaths.index(img)] = newpath
+                i += 1
+
+        # Maybe we should rethink this.
+        # Surely we need to convert images
+        # We also surely need to creat clips[] array
+        # That should be inside a function with clipsWithoutAudio, finalClip,
+        # The previous things should be another function
+        # increment render cound does not need to be in a function
+
+        # Create the final clip object
+        # We create a clip object from every path
+        # We couold have done this when processing images
+        clips = []
+        for i in range(0, len(actualPaths)):
+            clips.append(VideoFileClip(actualPaths[i], target_resolution=(1080, 1920)))
+
+        # Concatenating video clips (that are already clip objects)
+        # Without method="compose", result mp4 wouldn't play, because of different screen resolutions
+        clipWithoutAudio = concatenate_videoclips(clips, method="compose")
+        # This will cut the end. Other solution would be to decrease slideLen, for example 10 sec -> 9.2 sec, so it exacty fills the mp3
+        clipWithoutAudio.duration = mp3Duration
+        '''
+        # Create text
+        # We could get mp3 name from meta tag (if exists)
+        text = TextClip(
+            "example",
+            size="22",
+            color="black",
+            bg_color="transparent",
+            fontsize=32,
+            font="Courier",
+            align="bottom")
+        clipWithoutAudio = CompositeVideoClip(clipWithoutAudio, text)
+        '''
+        # print("selectedmp3: ", selectedMp3)
+        finalClip = clipWithoutAudio.set_audio(AudioFileClip(config["mp3_path"] + selectedMp3))
+        # print("duration: ", finalVideoClip.duration)
+        # This is the line that will actually create the mp4 file
         finalClip.write_videofile(
             config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4",
             fps=fps,
