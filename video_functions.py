@@ -130,7 +130,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
                 myImgClip.duration = int(slideLen)
                 newpath = "./temp_img_clips/" + str(i) + ".mp4"
                 # Start rendering
-                myImgClip.write_videofile(newpath, fps, preset="fast")
+                myImgClip.write_videofile(newpath, fps, preset=preset, threads=threads)
                 # myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
                 # Replace the path in the selectedVids array
                 actualPaths[actualPaths.index(img)] = newpath
