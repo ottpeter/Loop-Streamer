@@ -1,8 +1,11 @@
 from time import sleep
 import signal
+import threading
 import sys
 from directory_functions import *
 from video_functions import *
+from remove_locks import RemoveLocks
+
 
 # Dictionary that contains configuration parameters
 config = {
@@ -49,19 +52,21 @@ def Init():
     ReadConfig(config)
     ReadLists(config, vids, mp3, clips)
     CheckNewFiles(config, vids, mp3)
+    # First we start serving already existing clips with ffmpeg
+    # We will start StartClip in a background process. It will loop existing videos
+    backgroundThread.start()
 
 
 def Exit():
+    RemoveLocks()
     print("Goodbye")
+
 
 
 def Core():
     print("This is the Core, this will run in a loop")
-    # First we start serving already existing clips with ffmpeg
-    # ffmpeg will run on a different thread(because it's a bash command), so while that is running
-    # we can do other things, for example, video editing.
-    StartClip(config, clips)
-    CheckNewFiles(config, vids, mp3)
+    # Here we could check if background process is still alive
+    print("Background thread is alive? ", backgroundThread.is_alive())
 
     # Test
     print("vids dictionary: ")
@@ -69,12 +74,14 @@ def Core():
     print("mp3 dictionary: ")
     print(mp3)
 
+    CheckNewFiles(config, vids, mp3)
     CreateClip(config, vids, mp3, clips)
     sleep(5)
 
 
 try:
     # Program is running
+    backgroundThread = threading.Thread(target=StartClip, args=[config, clips])
     Init()
     # Infinite loop until interupt
     while True:

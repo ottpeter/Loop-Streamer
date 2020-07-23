@@ -3,22 +3,35 @@ import os
 import shutil
 from moviepy.editor import *
 from directory_functions import *
+from time import sleep
 
+# This function is running in background, on another thread
 def StartClip(config, clipsList):
-    # Check if previous clip is still running
-    # We assume that clip finished by duration
-    # There should be another method beside that, because of possible lag
+    duration = 0
 
     print(len(clipsList))
     # If there are no rendered videos yet, we can't stream anything
     if len(clipsList) == 0:
+        # Should print to log file
         print("There are no rendered clips yet")
         return 1
+    else:
+        # This is the command that we are running
+        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
 
-    # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
-    subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "threads", str(config["play_threads"]), "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
-    # Remembering PID would be really good
-    print("Starting clip: ", str(config["next_clip_to_play"]) + ".mp4")
+        while True:
+            # Start streaming
+            subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
+                             "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "threads",
+                             str(config["play_threads"]), "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+            # Remembering PID would be really good
+            print("Starting clip: ", str(config["next_clip_to_play"]) + ".mp4")
+            # ffmpeg will simply exit when done. Then we start a new stream
+            # Increment next_clip_to_play
+            config["next_clip_to_play"] += 1
+            # Might or might not need this
+            # sleep(1)
+
 
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
@@ -42,7 +55,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # According to write_videofile docs, this will affect file size, but not quality (faster rendering ~ larger size)
     preset = config["preset"]
     # Number of threads to use (when rendering final video)
-    threads = config["threads"]
+    threads = config["render_threads"]
 
     # Lowest number starts at first entry
     lowestRenderCount = list(mp3List.values())[0]
