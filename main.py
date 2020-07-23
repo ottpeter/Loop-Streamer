@@ -54,6 +54,7 @@ def Init():
     CheckNewFiles(config, vids, mp3)
     # First we start serving already existing clips with ffmpeg
     # We will start StartClip in a background process. It will loop existing videos
+    #ResizeImage("/home/user/Downloads/vids/assorted-books-on-green-wooden-chair-3494936.jpg", config)
     backgroundThread.start()
 
 

@@ -4,7 +4,9 @@ import shutil
 from moviepy.editor import *
 from directory_functions import *
 from time import sleep
+from time import time
 import datetime
+from  PIL import Image
 
 # This function is running in background, on another thread
 def StartClip(config, clipsList):
@@ -18,12 +20,20 @@ def StartClip(config, clipsList):
         return 1
     else:
         # This is the command that we are running
-        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
+        # ffmpeg -re -i example-vid.mp4 -vcodec libx264from subprocess import check_output -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
 
         while True:
             # Start streaming
-            subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
-                             "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+
+            #subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
+            #                "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+            ts = str(time())
+            ts = ts.rsplit(".", 1)[0]
+            args = ["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264",
+             "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
+             "rtmp://localhost/show/"]
+            with open("logs/stream_std/" + ts + ".log", "wb") as out, open("logs/stream_err/" + ts + ".log", "wb") as err:
+                subprocess.Popen(args=args, bufsize=0, stdout=out, stderr=err)
             # Remembering PID would be really good
             log.write(str(datetime.datetime.now()) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
             log.flush()
@@ -37,6 +47,26 @@ def StartClip(config, clipsList):
             # Might or might not need this
             sleep(1)
         log.close()
+
+
+# Resize image
+def ResizeImage(image_path, config):
+    img = Image.open(image_path)
+    width, height = img.size
+    res_ratio = (width/height) / (config["clip_width"]/config["clip_height"])
+    print(res_ratio)
+
+    # adjust to left-right edge
+    if width / height > config["clip_width"] / config["clip_height"]:
+        print("wide")
+        size = config["clip_width"], int(config["clip_height"]/res_ratio)
+    # adjust to top-bottom
+    else:
+        print("standing")
+        size = int(config["clip_width"]*res_ratio), config["clip_height"]
+
+    img_resized = img.resize(size, Image.ANTIALIAS)
+    img_resized.save("new.jpg", "JPEG")
 
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
@@ -82,10 +112,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # print("[0][1]: ", vidsSortedArray[0][1])
     index = 0
     while mp3Duration > allVidsDuration:
-        print("fill the clip")
-
         # Set the complete file path
-        print("index", index)
         currentFile = config["vids_path"] + vidsSortedArray[index][0]
         # Supported image extension: .jpg, .jpeg, .png, .JPG, .PNG
         if currentFile.endswith(".jpg") or currentFile.endswith(".png") or currentFile.endswith(".jpeg") or currentFile.endswith(".png") or currentFile.endswith(".PNG"):
@@ -101,7 +128,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
         selectedVids.append(currentFile)
         allVidsDuration += float(currentDuration)
         # Test
-        print(currentFile + " - ", currentDuration)
+        #print(currentFile + " - ", currentDuration)
 
         if (index < len(vidsSortedArray)-1):
             index += 1
@@ -130,7 +157,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
                 myImgClip.duration = int(slideLen)
                 newpath = "./temp_img_clips/" + str(i) + ".mp4"
                 # Start rendering
-                myImgClip.write_videofile(newpath, fps, preset=preset, threads=threads)
+                myImgClip.write_videofile(newpath, fps, preset=preset, threads=threads, write_logfile=True)
                 # myImgClip.write_videofile("./temp_img_clips/" + str(i) + ".mp4", fps, preset="fast")
                 # Replace the path in the selectedVids array
                 actualPaths[actualPaths.index(img)] = newpath
