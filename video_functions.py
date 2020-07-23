@@ -16,7 +16,7 @@ def StartClip(config, clipsList):
         return 1
 
     # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
-    subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "threads", config["play_threads"], "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+    subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "threads", str(config["play_threads"]), "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
     # Remembering PID would be really good
     print("Starting clip: ", str(config["next_clip_to_play"]) + ".mp4")
 
