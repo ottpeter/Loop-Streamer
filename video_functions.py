@@ -2,6 +2,7 @@ import subprocess
 import os
 import shutil
 from moviepy.editor import *
+from directory_functions import *
 
 def StartClip(config, clipsList):
     # Check if previous clip is still running
@@ -17,7 +18,9 @@ def StartClip(config, clipsList):
     # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
     #subprocess.run(["ffmpeg", "-version"])
     # We don't know if every parameter is an element in the array, or every word
-    subprocess.run((["ffmpeg", "-re", "-i", clipsList[config["next_clip_to_play"]], "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+    subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+    # Remembering PID would be really good
+    print("Would start clip: ", str(config["next_clip_to_play"]) + ".mp4")
 
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
@@ -91,6 +94,8 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # After this, we should have an array of the elements that we are going to use
     print("Total duration: ", allVidsDuration)
 
+    # Should create function SelectMp3(), SelectVids()
+
 
     # Create temporary clips from the images
     i = 0
@@ -113,10 +118,12 @@ def CreateClip(config, vidsList, mp3List, clipsList):
             actualPaths[actualPaths.index(img)] = newpath
             i += 1
 
-
-    # Create the clip
-    # I don't know what is this, probably we don't need it anymore
-    # This is not how we going to do this
+    # Maybe we should rethink this.
+    # Surely we need to convert images
+    # We also surely need to creat clips[] array
+    # That should be inside a function with clipsWithoutAudio, finalClip,
+    # The previous things should be another function
+    # increment render cound does not need to be in a function
 
     # Create the final clip object
     # We create a clip object from every path
@@ -149,7 +156,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # print("duration: ", finalVideoClip.duration)
     # This is the line that will actually create the mp4 file
     finalClip.write_videofile(
-        config["clips_path"] + config["next_clip_to_create"] + ".mp4",
+        config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4",
         fps=fps,
         preset="medium",
         write_logfile=True,
@@ -158,23 +165,25 @@ def CreateClip(config, vidsList, mp3List, clipsList):
 
     # File will probably exist if it's corrupted as well. Better method would be logs
     # It's seems when no error, last thing in log file will be kb/s rate
-    isRenderSuccessful = os.path.isfile(config["clips_path"] + config["next_clip_to_create"] + ".mp4")
+    isRenderSuccessful = os.path.isfile(config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4")
     #isRenderSuccessful = True
+
 
     # Increment render counts for all elements, but only after rendering was successful
     if isRenderSuccessful:
-        for element in selectedVids:
-            print(type(element))
-            vidsList["night-fog-1521028-1918x1094.jpg"] = 1
-            #vidsList[element[0].rsplit("/", 1)] = vidsList.get(element[0].rsplit("/", 1), 0) + 1
-        mp3List[selectedMp3.rsplit("/", 1)] = mp3List[selectedMp3.rsplit("/", 1)] + 1
+        for i in range(0, len(selectedVids)):
+            vidsList[selectedVids[i].rsplit("/", 1)[1]] = vidsList[selectedVids[i].rsplit("/", 1)[1]] + 1
+            #vidsList[element] = vidsList[element] + 1
+        mp3List[selectedMp3] = mp3List[selectedMp3] + 1
         # Insert the new mp4 to the clips dictionary
-        clipsList[config["next_clip_to_create"] + ".mp4"] = selectedMp3
+        clipsList[str(config["next_clip_to_create"]) + ".mp4"] = selectedMp3
         # Increment video counter for the ready 'clips' folder
         config["next_clip_to_create"] = config["next_clip_to_create"] + 1
         # Updating the config file
-        configFile = open("config.conf", "w")
-        for key in config:
-            configFile.write(key + " = " + config[key] + "\n")
-        configFile.close()
-        # The dat files also need to be updated
+        WriteConfig(config)
+        # Updating the list files
+        WriteLists(config, vidsList, mp3List, clipsList)
+
+
+
+
