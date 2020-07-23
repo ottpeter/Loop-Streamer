@@ -171,17 +171,23 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     finalClip = clipWithoutAudio.set_audio(AudioFileClip(config["mp3_path"] + selectedMp3))
     # print("duration: ", finalVideoClip.duration)
     # This is the line that will actually create the mp4 file
-    finalClip.write_videofile(
-        config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4",
-        fps=fps,
-        preset="medium",
-        write_logfile=True,
-        threads=2)
-    # We could add audio by parameter
+    try:
+        finalClip.write_videofile(
+            config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4",
+            fps=fps,
+            preset="medium",
+            write_logfile=True,
+            threads=2)
+        # We could add audio by parameter
+        isRenderSuccessful = True
+    except:
+        # Exit function
+        print("ERROR: Some error occured during rendering. We will continout the Core loop")
+        return 1
 
     # File will probably exist if it's corrupted as well. Better method would be logs
     # It's seems when no error, last thing in log file will be kb/s rate
-    isRenderSuccessful = os.path.isfile(config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4")
+    #isRenderSuccessful = os.path.isfile(config["clips_path"] + str(config["next_clip_to_create"]) + ".mp4")
     #isRenderSuccessful = True
 
 
