@@ -16,11 +16,9 @@ def StartClip(config, clipsList):
         return 1
 
     # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
-    #subprocess.run(["ffmpeg", "-version"])
-    # We don't know if every parameter is an element in the array, or every word
     subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
     # Remembering PID would be really good
-    print("Would start clip: ", str(config["next_clip_to_play"]) + ".mp4")
+    print("Starting clip: ", str(config["next_clip_to_play"]) + ".mp4")
 
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
