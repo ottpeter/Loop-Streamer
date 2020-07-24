@@ -81,7 +81,8 @@ def Core():
         newThread.start()
         mainLog.flush()
         if (newThread.is_alive()):
-            mainLog.write("StartClip loop is now running!\n")
+            now = str(datetime.datetime.now()).rsplit(".", 1)[0]
+            mainLog.write(now + "StartClip loop is now running!\n")
         else:
             mainLog.write("Couldn't restart StartClip.\n")
     mainLog.flush()

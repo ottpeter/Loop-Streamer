@@ -38,7 +38,7 @@ def StartClip(config, clipsList):
 
 
             # Remembering PID would be really good
-            log.write(str(datetime.datetime.now()) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
+            log.write(str(datetime.datetime.now()).rsplit(".", 1) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
             log.flush()
             # ffmpeg will simply exit when done. Then we start a new stream
             # Increment next_clip_to_play
@@ -241,13 +241,14 @@ def WriteClip(theClip, fps, preset, threads, config):
             threads=2)
         # We could add audio by parameter
         mainLog.write(now + " Rendering was successful. Clip name: " + str(config["next_clip_to_create"]) + ".mp4\n")
+        mainLog.close()
         return True
     except:
         mainLog.write(now + " There was an error while rendering the final MP4 file.")
-    mainLog.close()
+
 
 # Increment render counts for all elements, but only after rendering was successful
-def SaveChanges(selectedVids, vidsList, mp3List, clipsList, config):
+def SaveChanges(selectedVids, selectedMp3, vidsList, mp3List, clipsList, config):
     # Log
     mainLog = open("logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
@@ -265,8 +266,11 @@ def SaveChanges(selectedVids, vidsList, mp3List, clipsList, config):
         assert WriteConfig(config)
         # Updating the list files
         assert WriteLists(config, vidsList, mp3List, clipsList)
+        mainLog.write(now + " Changes successfully saved.\n")
+        mainLog.close()
     except:
         mainLog.write(now + " Couldn't write changes to dat files or the config file. Maybe one of the files is being edited by StartClip.\n")
+        print(" ERROR")
 
 
 
@@ -336,4 +340,9 @@ def CreateClip(config, vidsList, mp3List, clipsList):
 
     # Save changes to files
     if isRenderSuccessful:
-        SaveChanges(selectedVids, vidsList, mp3List, clipsList, config)
+        SaveChanges(selectedVids, selectedMp3, vidsList, mp3List, clipsList, config)
+
+    mainLog.close()
+
+    print("config: ", config)
+    print("vidsList: ", vidsList)
