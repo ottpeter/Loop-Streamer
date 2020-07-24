@@ -25,8 +25,9 @@ def StartClip(config, clipsList):
         while True:
             # Start streaming
 
-            #subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
+            subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
             #                "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+            '''
             ts = str(time())
             ts = ts.rsplit(".", 1)[0]
             args = ["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264",
@@ -34,6 +35,7 @@ def StartClip(config, clipsList):
              "rtmp://localhost/show/"]
             with open("logs/stream_std/" + ts + ".log", "wb") as out, open("logs/stream_err/" + ts + ".log", "wb") as err:
                 subprocess.Popen(args=args, bufsize=0, stdout=out, stderr=err)
+            '''
             # Remembering PID would be really good
             log.write(str(datetime.datetime.now()) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
             log.flush()
