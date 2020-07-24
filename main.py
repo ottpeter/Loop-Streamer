@@ -76,11 +76,11 @@ def Core():
         mainLog.write(now + " StartClip loop is running\n")
         mainLog.flush()
     else:
-        mainLog.write(now + "StartClip loop stopped unexpectedly. Restarting StartClip...\n")
-        backgroundThread.start()
-        # THREADS CAN ONLY BE STARTED ONCE
+        mainLog.write(now + " StartClip loop stopped unexpectedly. Restarting StartClip...\n")
+        newThread = threading.Thread(target=StartClip, args=[config, clips])
+        newThread.start()
         mainLog.flush()
-        if (backgroundThread.is_alive()):
+        if (newThread.is_alive()):
             mainLog.write("StartClip loop is now running!\n")
         else:
             mainLog.write("Couldn't restart StartClip.\n")

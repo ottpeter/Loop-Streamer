@@ -95,8 +95,7 @@ def ResizeImage(image_path, config):
 
         img_resized = img.resize(size, Image.ANTIALIAS)
         img_resized.save("temp.jpg", "JPEG")
-        # We will comment this out
-        mainLog.write(now + " Image resized successfully.\n")
+        #mainLog.write(now + " Image resized successfully.\n")
     except:
         mainLog.write(now + " There was an error while resizing the image. image_path: " + image_path + "\n")
 
@@ -139,7 +138,7 @@ def sortVidsList(clipLength, inputList, config, slideLen, selectedVids):
             else:
                 index = 0
     except:
-        mainLog.write(now + " There was an error while attempting to sort vidsList by render count.\n")
+        mainLog.write(now + " There was an error while attempting to sort vidsList by render count. clipLength:" + clipLength + " inputList: " + inputList + " selectedVids: " + selectedVids + "\n")
 
     mainLog.close()
 
@@ -239,9 +238,34 @@ def WriteClip(theClip, fps, preset, threads, config):
             threads=2)
         # We could add audio by parameter
         mainLog.write(now + " Rendering was successful. Clip name: " + str(config["next_clip_to_create"]) + ".mp4\n")
+        return True
     except:
         mainLog.write(now + " There was an error while rendering the final MP4 file.")
     mainLog.close()
+
+# Increment render counts for all elements, but only after rendering was successful
+def SaveChanges(selectedVids, vidsList, mp3List, clipsList, config):
+    # Log
+    mainLog = open("logs/main.log", "a")
+    now = str(datetime.datetime.now()).rsplit(".", 1)[0]
+
+    try:
+        for i in range(0, len(selectedVids)):
+            vidsList[selectedVids[i].rsplit("/", 1)[1]] = vidsList[selectedVids[i].rsplit("/", 1)[1]] + 1
+            #vidsList[element] = vidsList[element] + 1
+        mp3List[selectedMp3] = mp3List[selectedMp3] + 1
+        # Insert the new mp4 to the clips dictionary
+        clipsList[str(config["next_clip_to_create"]) + ".mp4"] = selectedMp3
+        # Increment video counter for the ready 'clips' folder
+        config["next_clip_to_create"] = config["next_clip_to_create"] + 1
+        # Updating the config file
+        assert WriteConfig(config)
+        # Updating the list files
+        assert WriteLists(config, vidsList, mp3List, clipsList)
+    except:
+        mainLog.write(now + " Couldn't write changes to dat files or the config file. Maybe one of the files is being edited by StartClip.\n")
+
+
 
 
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
@@ -303,22 +327,9 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # Write the mp4 file
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
     mainLog.write(now + " Writing mp4...\n")
-    WriteClip(finalClip, fps, preset, threads, config)
+    isRenderSuccessful = WriteClip(finalClip, fps, preset, threads, config)
     mainLog.flush()
 
     # Save changes to files
-
-    # Increment render counts for all elements, but only after rendering was successful
     if isRenderSuccessful:
-        for i in range(0, len(selectedVids)):
-            vidsList[selectedVids[i].rsplit("/", 1)[1]] = vidsList[selectedVids[i].rsplit("/", 1)[1]] + 1
-            #vidsList[element] = vidsList[element] + 1
-        mp3List[selectedMp3] = mp3List[selectedMp3] + 1
-        # Insert the new mp4 to the clips dictionary
-        clipsList[str(config["next_clip_to_create"]) + ".mp4"] = selectedMp3
-        # Increment video counter for the ready 'clips' folder
-        config["next_clip_to_create"] = config["next_clip_to_create"] + 1
-        # Updating the config file
-        WriteConfig(config)
-        # Updating the list files
-        WriteLists(config, vidsList, mp3List, clipsList)
+        SaveChanges(selectedVids, vidsList, mp3List, clipsList, config)

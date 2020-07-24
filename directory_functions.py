@@ -116,11 +116,15 @@ def WriteConfig(config):
         configFile.close()
         # Delete lock
         os.remove("config.lock")
+        return True
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (config.conf)")
+        return False
 
 
 def WriteLists(config, vidsList, mp3List, clipsList):
+    allSuccessfull = True
+
     # Write vids
     try:
         # Lock file can not exist
@@ -137,6 +141,7 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove("vids.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (vids.dat)")
+        allSuccessfull = False
 
     # Write mp3
     try:
@@ -154,6 +159,7 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove("mp3.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (mp3.dat)")
+        allSuccessfull = False
 
     # Write clips
     try:
@@ -173,7 +179,8 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove("clips.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (clips.dat)")
-
+        allSuccessfull = False
+    return allSuccessfull
 
 def CheckNewFiles(config, vidsList, mp3List):
     # Log file
