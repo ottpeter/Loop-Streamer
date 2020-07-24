@@ -37,6 +37,8 @@ clips = {
 
 }
 
+
+# This function handles SIGTERM
 def sigterm_handler(_signo, _stack_frame):
     # Raises SystemExit(0)
     sys.exit(0)
@@ -54,8 +56,9 @@ def Init():
     CheckNewFiles(config, vids, mp3)
     # First we start serving already existing clips with ffmpeg
     # We will start StartClip in a background process. It will loop existing videos
-    #ResizeImage("/home/user/Downloads/vids/assorted-books-on-green-wooden-chair-3494936.jpg", config)
     backgroundThread.start()
+    # Testing only
+    # ResizeImage("/home/user/Downloads/vids/assorted-books-on-green-wooden-chair-3494936.jpg", config)
 
 
 def Exit():
@@ -65,23 +68,35 @@ def Exit():
 
 
 def Core():
-    print("This is the Core, this will run in a loop")
-    # Here we could check if background process is still alive
-    print("Background thread is alive? ", backgroundThread.is_alive())
+    mainLog = open("logs/main.log", "a")
+    # Current time, without microseconds
+    now = str(datetime.datetime.now()).rsplit(".", 1)[0]
+    mainLog.write(now + " Entering Core...\n")
+    if backgroundThread.is_alive():
+        mainLog.write(now + " StartClip loop is running\n")
+        mainLog.flush()
+    else:
+        mainLog.write(now + "StartClip loop stopped unexpectedly. Restarting StartClip...\n")
+        backgroundThread.start()
+        # THREADS CAN ONLY BE STARTED ONCE
+        mainLog.flush()
+        if (backgroundThread.is_alive()):
+            mainLog.write("StartClip loop is now running!\n")
+        else:
+            mainLog.write("Couldn't restart StartClip.\n")
+    mainLog.flush()
 
-    # Test
-    print("vids dictionary: ")
-    print(vids)
-    print("mp3 dictionary: ")
-    print(mp3)
-
+    mainLog.write(now + " Checking new files...\n")
     CheckNewFiles(config, vids, mp3)
+    mainLog.write(now + " Creating a new clip...\n")
     CreateClip(config, vids, mp3, clips)
-    sleep(5)
+    mainLog.close()
+    sleep(1)
 
 
 try:
     # Program is running
+    # Create background thread object. Init() will start background thread
     backgroundThread = threading.Thread(target=StartClip, args=[config, clips])
     Init()
     # Infinite loop until interupt

@@ -136,3 +136,5 @@ clips.dat
 temp_img_clips
 logs/stream_std/*
 logs/stream_err/*
+logs/main.log
+logs/stream.log

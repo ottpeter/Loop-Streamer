@@ -1,4 +1,5 @@
 import os
+import datetime
 
 
 def ReadConfig(config):
@@ -175,6 +176,10 @@ def WriteLists(config, vidsList, mp3List, clipsList):
 
 
 def CheckNewFiles(config, vidsList, mp3List):
+    # Log file
+    mainLog = open("logs/main.log", "a")
+    now = str(datetime.datetime.now()).rsplit(".", 1)[0]
+
     # Scan the folders for files
     currentVids = os.listdir(config["vids_path"])
     currentMp3 = os.listdir(config["mp3_path"])
@@ -215,5 +220,10 @@ def CheckNewFiles(config, vidsList, mp3List):
     # Close files, if open
     if isMp3FileOpen:
         mp3Dat.close()
+        mainLog.write(now + " Wrote new elements to mp3.dat\n")
+
     if isVidsFileOpen:
         vidsDat.close()
+        mainLog.write(now + " Wrote new elements to vids.dat\n")
+
+    mainLog.close()
