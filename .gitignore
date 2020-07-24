@@ -134,4 +134,5 @@ vids.dat
 mp3.dat
 clips.dat
 temp_img_clips
-logs
+logs/stream_std/*
+logs/stream_err/*
