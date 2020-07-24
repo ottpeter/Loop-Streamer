@@ -38,7 +38,7 @@ def StartClip(config, clipsList):
 
 
             # Remembering PID would be really good
-            log.write(str(datetime.datetime.now()).rsplit(".", 1) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
+            log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
             log.flush()
             # ffmpeg will simply exit when done. Then we start a new stream
             # Increment next_clip_to_play
@@ -244,7 +244,7 @@ def WriteClip(theClip, fps, preset, threads, config):
         mainLog.close()
         return True
     except:
-        mainLog.write(now + " There was an error while rendering the final MP4 file.")
+        mainLog.write(now + " There was an error while rendering the final MP4 file.\n")
 
 
 # Increment render counts for all elements, but only after rendering was successful
