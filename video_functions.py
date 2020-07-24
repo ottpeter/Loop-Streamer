@@ -26,16 +26,17 @@ def StartClip(config, clipsList):
             # Start streaming
 
             subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
-            #                "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
-            '''
-            ts = str(time())
-            ts = ts.rsplit(".", 1)[0]
-            args = ["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264",
-             "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
-             "rtmp://localhost/show/"]
-            with open("logs/stream_std/" + ts + ".log", "wb") as out, open("logs/stream_err/" + ts + ".log", "wb") as err:
-                subprocess.Popen(args=args, bufsize=0, stdout=out, stderr=err)
-            '''
+                            "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+
+            #ts = str(time())
+            #ts = ts.rsplit(".", 1)[0]
+            #args = ["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264",
+            # "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
+            # "rtmp://localhost/show/"]
+            #with open("logs/stream_std/" + ts + ".log", "wb") as out, open("logs/stream_err/" + ts + ".log", "wb") as err:
+            #    subprocess.Popen(args=args, bufsize=0, stdout=out, stderr=err)
+
+
             # Remembering PID would be really good
             log.write(str(datetime.datetime.now()) + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
             log.flush()
@@ -323,14 +324,15 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     # Create the final clip object
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
     mainLog.write(now + " Creating the final clip object\n")
-    finalClip = FinalClip(actualPaths, selectedMp3, mp3Duration, config)
     mainLog.flush()
+    finalClip = FinalClip(actualPaths, selectedMp3, mp3Duration, config)
+
 
     # Write the mp4 file
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
     mainLog.write(now + " Writing mp4...\n")
-    isRenderSuccessful = WriteClip(finalClip, fps, preset, threads, config)
     mainLog.flush()
+    isRenderSuccessful = WriteClip(finalClip, fps, preset, threads, config)
 
     # Save changes to files
     if isRenderSuccessful:
