@@ -97,11 +97,15 @@ def Core():
 
     mainLog.write(now + " Checking new files...\n")
     CheckNewFiles(config, vids, mp3)
-    mainLog.write(now + " Creating a new clip...\n")
     if config["rendering"] == "on" \
             and datetime.datetime.now().time() > start_rendering.time() \
             and datetime.datetime.now().time() < stop_rendering.time():
+        mainLog.write(now + " Creating a new clip...\n")
+        mainLog.flush()
         CreateClip(config, vids, mp3, clips)
+    else:
+        # Wait 5 minutes
+        sleep(300)
     mainLog.close()
     sleep(1)
 
