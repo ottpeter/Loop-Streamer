@@ -90,9 +90,9 @@ def Core():
         mainLog.flush()
         if (newThread.is_alive()):
             now = str(datetime.datetime.now()).rsplit(".", 1)[0]
-            mainLog.write(now + "StartClip loop is now running!\n")
+            mainLog.write(now + " StartClip loop is now running!\n")
         else:
-            mainLog.write("Couldn't restart StartClip.\n")
+            mainLog.write(" Couldn't restart StartClip.\n")
     mainLog.flush()
 
     mainLog.write(now + " Checking new files...\n")

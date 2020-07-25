@@ -37,6 +37,7 @@ def ReadConfig(config):
         os.remove("config.lock")
     except:
         print("ERROR: Lock file exists. File can not be opened. (config.conf)")
+        os.remove("config.lock")
 
 
 def ReadLists(config, vidsList, mp3List, clipsList):
@@ -100,6 +101,9 @@ def ReadLists(config, vidsList, mp3List, clipsList):
         os.remove("clips.lock")
     except:
         print("ERROR: One or more lock file exist for vids.dat, mp3.dat, clips.dat. Most likely these files are being written at the moment. Files can not be opened. ReadLists() will skip.")
+        os.remove("vids.lock")
+        os.remove("mp3.lock")
+        os.remove("clips.lock")
 
 
 def WriteConfig(config):
@@ -141,6 +145,7 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove("vids.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (vids.dat)")
+        os.remove("vids.lock")
         allSuccessfull = False
 
     # Write mp3
@@ -159,6 +164,7 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove("mp3.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (mp3.dat)")
+        os.remove("mp3.lock")
         allSuccessfull = False
 
     # Write clips
@@ -179,6 +185,7 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove("clips.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (clips.dat)")
+        os.remove("clips.lock")
         allSuccessfull = False
     return allSuccessfull
 
