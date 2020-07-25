@@ -6,6 +6,7 @@ from time import sleep
 import datetime
 from PIL import Image
 import threading
+import random
 
 # This function is running in background, on another thread
 def StartClip(config, clipsList):
@@ -17,7 +18,6 @@ def StartClip(config, clipsList):
         # Should print to log file
         log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " There are no rendered clips yet.\n")
         log.close()
-        sleep(300)
         return 1
     else:
         # This is the command that we are running
@@ -26,19 +26,19 @@ def StartClip(config, clipsList):
         t = threading.current_thread()
         while getattr(t, "loop", True):
             # Start streaming
-            for entry in clipsList.keys():
-                # We loop through clipsList. We could manually add ready clips to clips folder as well.
-                # For that, we would need a function that will insert that clip to clips.dat
-                fileToPlay = config["clips_path"] + entry
+            entry = random.choice(list(clipsList.keys()))
+            # We loop through clipsList. We could manually add ready clips to clips folder as well.
+            # For that, we would need a function that will insert that clip to clips.dat
+            fileToPlay = config["clips_path"] + entry
 
-                log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Starting clip: " + fileToPlay + "\n")
-                log.flush()
+            log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Starting clip: " + fileToPlay + "\n")
+            log.flush()
 
-                subprocess.run(
-                    (["ffmpeg", "-re", "-i", fileToPlay,
-                      "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", "4M", "-bufsize", "2M", "-vprofile",
-                      "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
-                      "rtmp://localhost/show/"]))
+            subprocess.run(
+                (["ffmpeg", "-re", "-i", fileToPlay,
+                  "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", "4M", "-bufsize", "2M", "-vprofile",
+                  "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
+                  "rtmp://localhost/show/"]))
             # ffmpeg will simply exit when done. Then we start a new stream
         log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Term signal received. Loop has stopped\n")
 
