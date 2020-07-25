@@ -5,6 +5,7 @@ from directory_functions import *
 from time import sleep
 import datetime
 from PIL import Image
+import threading
 
 # This function is running in background, on another thread
 def StartClip(config, clipsList):
@@ -22,7 +23,8 @@ def StartClip(config, clipsList):
         # This is the command that we are running
         # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -bufsize 2M -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
 
-        while True:
+        t = threading.current_thread()
+        while getattr(t, "loop", True):
             # Start streaming
             for entry in clipsList.keys():
                 # We loop through clipsList. We could manually add ready clips to clips folder as well.
@@ -38,7 +40,7 @@ def StartClip(config, clipsList):
                       "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
                       "rtmp://localhost/show/"]))
             # ffmpeg will simply exit when done. Then we start a new stream
-
+        log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Term signal received. Loop has stopped\n")
 
 # Select mp3
 def SelectMp3(mp3List, config):

@@ -67,7 +67,9 @@ def Init():
 
 def Exit():
     RemoveLocks()
+    backgroundThread.loop = False
     print("Goodbye")
+    # We should print to log
 
 
 
