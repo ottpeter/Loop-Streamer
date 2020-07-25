@@ -20,13 +20,13 @@ def StartClip(config, clipsList):
         return 1
     else:
         # This is the command that we are running
-        # ffmpeg -re -i example-vid.mp4 -vcodec libx264from subprocess import check_output -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
+        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
 
         while True:
             # Start streaming
 
             subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
-                            "-vcodec", "libx264", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+                            "-vcodec", "libx264", "-preset", "ultrafast", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
 
             #ts = str(time())
             #ts = ts.rsplit(".", 1)[0]
