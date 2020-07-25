@@ -211,7 +211,25 @@ def FinalClip(paths, mp3File, clipLength, config):
         # We create a clip object from every path
         clips = []
         for i in range(0, len(paths)):
-            clips.append(VideoFileClip(paths[i], target_resolution=(1080, 1920)))
+            # Original resolution
+            origRes = VideoFileClip(paths[i]).size
+            # This needs to be modified by aspect ration ratio, one extra multiplication
+            widthRatio = config["clip_width"] / origRes[0]
+            heightRatio = config["clip_height"] / origRes[1]
+            # Aspect difference
+            aspect_difference = ( float((origRes[0])/float(origRes[1])) / (float(config["clip_width"])/float(config["clip_height"])) )
+
+            target_width = config["clip_width"]
+            target_height = config["clip_height"]
+            # Wide aspect ratio
+            if aspect_difference > 1.0:
+                target_width = int(widthRatio * origRes[0])
+                target_height = int(heightRatio * origRes[1] / aspect_difference)
+            # Standing aspect ratio
+            if aspect_difference < 1.0:
+                target_width = int(widthRatio * origRes[0] * aspect_difference)
+                target_height = int(heightRatio * origRes[1])
+            clips.append(VideoFileClip(paths[i], target_resolution=(target_height, target_width)))
 
         # Concatenating video clips (that are already clip objects)
         # Without method="compose", result mp4 wouldn't play, because of different screen resolutions
