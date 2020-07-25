@@ -79,7 +79,7 @@ def Core():
     start_rendering = datetime.datetime.strptime(config["render_start"], "%H:%M")
     stop_rendering = datetime.datetime.strptime(config["render_stop"], "%H:%M")
     # It will be 1900 Jan 1 and given time
-    mainLog.write(now + " Entering Core...\n")
+    mainLog.write(now + " Entering Core loop...\n")
     if backgroundThread.is_alive():
         mainLog.write(now + " StartClip loop is running\n")
         mainLog.flush()

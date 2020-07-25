@@ -353,7 +353,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
 
     # Write the mp4 file
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
-    mainLog.write(now + " Writing mp4...\n")
+    mainLog.write(now + " Rendering video to mp4...\n")
     mainLog.flush()
     isRenderSuccessful = WriteClip(finalClip, fps, preset, threads, config)
 
