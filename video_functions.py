@@ -16,7 +16,9 @@ def StartClip(config, clipsList):
     # If there are no rendered videos yet, we can't stream anything
     if len(clipsList) == 0:
         # Should print to log file
-        print("There are no rendered clips yet")
+        log.write("There are no rendered clips yet")
+        log.close()
+        sleep(300)
         return 1
     else:
         # This is the command that we are running
@@ -24,24 +26,33 @@ def StartClip(config, clipsList):
 
         while True:
             # Start streaming
+            for entry in clipsList.keys():
+                # We loop through clipsList. We could manually add ready clips to clips folder as well.
+                # For that, we would need a function that will insert that clip to clips.dat
+                fileToPlay = config["clips_path"] + entry
 
-            subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
-                            "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", "4M", "-bufsize", "2M", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+                subprocess.run(
+                    (["ffmpeg", "-re", "-i", fileToPlay,
+                      "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", "4M", "-bufsize", "2M", "-vprofile",
+                      "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
+                      "rtmp://localhost/show/"]))
 
-            #ts = str(time())
-            #ts = ts.rsplit(".", 1)[0]
-            #args = ["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264",
-            # "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
-            # "rtmp://localhost/show/"]
-            #with open("logs/stream_std/" + ts + ".log", "wb") as out, open("logs/stream_err/" + ts + ".log", "wb") as err:
-            #    subprocess.Popen(args=args, bufsize=0, stdout=out, stderr=err)
+                # ts = str(time())
+                # ts = ts.rsplit(".", 1)[0]
+                # args = ["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4", "-vcodec", "libx264",
+                # "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
+                # "rtmp://localhost/show/"]
+                # with open("logs/stream_std/" + ts + ".log", "wb") as out, open("logs/stream_err/" + ts + ".log", "wb") as err:
+                #    subprocess.Popen(args=args, bufsize=0, stdout=out, stderr=err)
 
+                # Remembering PID would be really good
+                log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Starting clip: " + fileToPlay + "\n")
+                log.flush()
 
-            # Remembering PID would be really good
-            log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Starting clip: " + str(config["next_clip_to_play"]) + ".mp4\n")
-            log.flush()
             # ffmpeg will simply exit when done. Then we start a new stream
-            # Increment next_clip_to_play
+
+            # Increment next_clip_to_play (we don1t need this. and we don't need next_clip_to_play)
+            '''
             if config["next_clip_to_play"] + 1 == config["next_clip_to_create"]:
                 # We can't play mp4 that is being created
                 config["next_clip_to_play"] = 0
@@ -49,6 +60,7 @@ def StartClip(config, clipsList):
                 config["next_clip_to_play"] += 1
             # Might or might not need this
             sleep(1)
+            '''
         log.close()
 
 
