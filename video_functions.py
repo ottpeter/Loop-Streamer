@@ -26,7 +26,7 @@ def StartClip(config, clipsList):
             # Start streaming
 
             subprocess.run((["ffmpeg", "-re", "-i", config["clips_path"] + str(config["next_clip_to_play"]) + ".mp4",
-                            "-vcodec", "libx264", "-preset", "ultrafast", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
+                            "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", "4M", "-vprofile", "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv", "rtmp://localhost/show/"]))
 
             #ts = str(time())
             #ts = ts.rsplit(".", 1)[0]
