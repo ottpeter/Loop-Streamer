@@ -40,6 +40,7 @@ clips = {
 
 }
 
+isRunning = True
 
 # This function handles SIGTERM
 def sigterm_handler(_signo, _stack_frame):
@@ -116,10 +117,12 @@ try:
     backgroundThread = threading.Thread(target=StartClip, args=[config, clips])
     Init()
     # Infinite loop until interupt
-    while True:
+    while isRunning:
         Core()
         if sys.argv[0] == "handle_signal":
             signal.signal(signal.SIGTERM, sigterm_handler)
+            isRunning = False
+
 finally:
     # Program exiting
     Exit()
