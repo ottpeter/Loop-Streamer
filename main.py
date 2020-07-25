@@ -47,10 +47,6 @@ def sigterm_handler(_signo, _stack_frame):
     sys.exit(0)
 
 
-if sys.argv[0] == "handle_signal":
-    signal.signal(signal.SIGTERM, sigterm_handler)
-
-
 def Init():
     print("Welcome!")
     # Read the files where we keep already scanned vids&mp3s, put them in arrays
@@ -122,6 +118,8 @@ try:
     # Infinite loop until interupt
     while True:
         Core()
+        if sys.argv[0] == "handle_signal":
+            signal.signal(signal.SIGTERM, sigterm_handler)
 finally:
     # Program exiting
     Exit()

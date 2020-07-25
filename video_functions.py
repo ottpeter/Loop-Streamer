@@ -135,7 +135,7 @@ def sortVidsList(clipLength, inputList, config, slideLen, selectedVids):
             else:
                 index = 0
     except:
-        mainLog.write(now + " There was an error while attempting to sort vidsList by render count. clipLength:" + clipLength + " inputList: " + inputList + " selectedVids: " + selectedVids + "\n")
+        mainLog.write(now + " There was an error while attempting to sort vidsList by render count. clipLength:" + str(clipLength) + " inputList: " + inputList + " selectedVids: " + selectedVids + "\n")
 
     mainLog.close()
 
