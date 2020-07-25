@@ -69,8 +69,12 @@ def SelectMp3(mp3List, config):
                 selectedMp3 = entry
                 break
 
-        mainLog.close()
-        return selectedMp3
+        if mp3List[selectedMp3] < config["clip_per_mp3"]:
+            mainLog.close()
+            return selectedMp3
+        else:
+            mainLog.close()
+            return "END_RENDERING"
     except:
         mainLog.write(now + "There was an error while selecting the mp3.")
     mainLog.close()
@@ -324,6 +328,13 @@ def CreateClip(config, vidsList, mp3List, clipsList):
 
     # Select mp3
     selectedMp3 = SelectMp3(mp3List, config)
+    if selectedMp3 == "END_RENDERING":
+        # End the rendering process, because all mp3 files are processed
+        mainLog.write(now + " All mp3 files reached desired render count\n")
+        mainLog.close()
+        # We will wait 5 minutes, we don't want to fill up the log files.
+        sleep(300)
+        return 2
     mp3Duration = ((AudioFileClip(config["mp3_path"] + selectedMp3)).duration)
     mainLog.write(now + " Selected mp3: " + selectedMp3 + ", duration: " + str(mp3Duration) + "\n")
     mainLog.flush()

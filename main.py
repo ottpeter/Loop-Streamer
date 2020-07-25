@@ -3,6 +3,7 @@
 from time import sleep
 import signal
 import threading
+import datetime
 import sys
 from directory_functions import *
 from video_functions import *
@@ -71,9 +72,13 @@ def Exit():
 
 
 def Core():
+    # Log
     mainLog = open("logs/main.log", "a")
     # Current time, without microseconds
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
+    start_rendering = datetime.datetime.strptime(config["render_start"], "%H:%M")
+    stop_rendering = datetime.datetime.strptime(config["render_stop"], "%H:%M")
+    # It will be 1900 Jan 1 and given time
     mainLog.write(now + " Entering Core...\n")
     if backgroundThread.is_alive():
         mainLog.write(now + " StartClip loop is running\n")
@@ -93,7 +98,10 @@ def Core():
     mainLog.write(now + " Checking new files...\n")
     CheckNewFiles(config, vids, mp3)
     mainLog.write(now + " Creating a new clip...\n")
-    CreateClip(config, vids, mp3, clips)
+    if config["rendering"] == "on" \
+            and datetime.datetime.now().time() > start_rendering.time() \
+            and datetime.datetime.now().time() < stop_rendering.time():
+        CreateClip(config, vids, mp3, clips)
     mainLog.close()
     sleep(1)
 

@@ -12,3 +12,6 @@ $ apt install python3-pip
 
 Then moviepy can be installed with:
 $ pip3 install moviepy
+
+
+Timezone on the server needs to be set, see [this manual](https://linuxize.com/post/how-to-set-or-change-timezone-on-debian-10/).
