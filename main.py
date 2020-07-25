@@ -74,6 +74,7 @@ def Exit():
 def Core():
     # Log
     mainLog = open("logs/main.log", "a")
+    global backgroundThread
     # Current time, without microseconds
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
     start_rendering = datetime.datetime.strptime(config["render_start"], "%H:%M")
@@ -85,14 +86,15 @@ def Core():
         mainLog.flush()
     else:
         mainLog.write(now + " StartClip loop stopped unexpectedly. Restarting StartClip...\n")
-        newThread = threading.Thread(target=StartClip, args=[config, clips])
-        newThread.start()
+        backgroundThread = None
+        backgroundThread = threading.Thread(target=StartClip, args=[config, clips])
+        backgroundThread.start()
         mainLog.flush()
-        if (newThread.is_alive()):
+        if backgroundThread.is_alive():
             now = str(datetime.datetime.now()).rsplit(".", 1)[0]
             mainLog.write(now + " StartClip loop is now running!\n")
         else:
-            mainLog.write(" Couldn't restart StartClip.\n")
+            mainLog.write(now + " Couldn't restart StartClip.\n")
     mainLog.flush()
 
     mainLog.write(now + " Checking new files...\n")
