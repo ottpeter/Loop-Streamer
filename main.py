@@ -1,3 +1,5 @@
+#!/usr/bin/env python 
+
 from time import sleep
 import signal
 import threading
@@ -51,6 +53,7 @@ if sys.argv[0] == "handle_signal":
 def Init():
     print("Welcome!")
     # Read the files where we keep already scanned vids&mp3s, put them in arrays
+    # LOG
     ReadConfig(config)
     ReadLists(config, vids, mp3, clips)
     CheckNewFiles(config, vids, mp3)
