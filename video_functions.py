@@ -17,11 +17,12 @@ def StartClip(config, clipsList):
     if len(clipsList) == 0:
         # Should print to log file
         log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " There are no rendered clips yet.\n")
+        sleep(30)
         log.close()
         return 1
     else:
         # This is the command that we are running
-        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -bufsize 2M -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
+        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -minrate 0.5M -bufsize 2M -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
 
         t = threading.current_thread()
         while getattr(t, "loop", True):
@@ -36,7 +37,7 @@ def StartClip(config, clipsList):
 
             subprocess.run(
                 (["ffmpeg", "-re", "-i", fileToPlay,
-                  "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", "4M", "-bufsize", "2M", "-vprofile",
+                  "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", config["streaming_maxrate"], "-minrate", config["streaming_minrate"], "-bufsize", "2M", "-vprofile",
                   "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
                   "rtmp://localhost/show/"]))
             # ffmpeg will simply exit when done. Then we start a new stream
@@ -136,7 +137,7 @@ def sortVidsList(clipLength, inputList, config, slideLen, selectedVids):
             else:
                 index = 0
     except:
-        mainLog.write(now + " There was an error while attempting to sort vidsList by render count. clipLength:" + str(clipLength) + " inputList: " + inputList + " selectedVids: " + selectedVids + "\n")
+        mainLog.write(now + " There was an error while attempting to sort vidsList by render count. clipLength:" + str(clipLength) + "\n")
 
     mainLog.close()
 
