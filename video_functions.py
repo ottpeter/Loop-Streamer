@@ -37,7 +37,7 @@ def StartClip(config, clipsList):
 
             subprocess.run(
                 (["ffmpeg", "-re", "-i", fileToPlay,
-                  "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", config["streaming_maxrate"], "-minrate", config["streaming_minrate"], "-bufsize", "2M", "-vprofile",
+                  "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", config["streaming_maxrate"], "-minrate", config["streaming_minrate"], "-bufsize", config["streaming_bufsize"], "-vprofile",
                   "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
                   "rtmp://localhost/show/"]))
             # ffmpeg will simply exit when done. Then we start a new stream
