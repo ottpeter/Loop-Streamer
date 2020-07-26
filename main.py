@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python3
 
 from time import sleep
 import signal
@@ -20,6 +20,7 @@ config = {
     "next_clip_to_create": 0,
     # How many seconds an image should be shown in slideshow (this won't affect already rendered clips)
     "image_slideshow_length": 10,
+    "root_path": "/home/user/Loop-Streamer/"
 }
 
 # Dictionary that contains the file names of videos & pictures
@@ -72,7 +73,7 @@ def Exit():
 
 def Core():
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     global backgroundThread
     # Current time, without microseconds
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]

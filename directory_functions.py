@@ -5,12 +5,12 @@ import datetime
 def ReadConfig(config):
     try:
         # Lock file can not exist
-        assert not (os.path.isfile("config.lock"))
+        assert not (os.path.isfile(config["root_path"] + "config.lock"))
         # Create lock
-        lock = open("config.lock", "w")
+        lock = open(config["root_path"] + "config.lock", "w")
         lock.close()
         # Load config files into arrays / objects
-        configFile = open("config.conf", "r")
+        configFile = open(config["root_path"] + "config.conf", "r")
         fileContent = configFile.read()
         # Splitting up content into lines
         configLines = fileContent.split("\n")
@@ -34,29 +34,29 @@ def ReadConfig(config):
         print("\n\n")
         configFile.close()
         # Delete lock
-        os.remove("config.lock")
+        os.remove(config["root_path"] + "config.lock")
     except:
         print("ERROR: Lock file exists. File can not be opened. (config.conf)")
-        os.remove("config.lock")
+        os.remove(config["root_path"] + "config.lock")
 
 
 def ReadLists(config, vidsList, mp3List, clipsList):
     try:
         # Make sure that files are not being written at the moment
-        assert not os.path.isfile("vids.lock")
-        assert not os.path.isfile("mp3.lock")
-        assert not os.path.isfile("clips.lock")
+        assert not os.path.isfile(config["root_path"] + "vids.lock")
+        assert not os.path.isfile(config["root_path"] + "mp3.lock")
+        assert not os.path.isfile(config["root_path"] + "clips.lock")
         # Check which files we already scanned. We store them in 2 dat files, 'vids.dat', 'mp3.dat'
         # Create locks
-        lock1 = open("vids.lock", "w")
-        lock2 = open("mp3.lock", "w")
-        lock3 = open("clips.lock", "w")
+        lock1 = open(config["root_path"] + "vids.lock", "w")
+        lock2 = open(config["root_path"] + "mp3.lock", "w")
+        lock3 = open(config["root_path"] + "clips.lock", "w")
         lock1.close()
         lock2.close()
         lock3.close()
-        vidsDat = open("vids.dat", "r")
-        mp3Dat = open("mp3.dat", "r")
-        clipsDat = open("clips.dat", "r")
+        vidsDat = open(config["root_path"] + "vids.dat", "r")
+        mp3Dat = open(config["root_path"] + "mp3.dat", "r")
+        clipsDat = open(config["root_path"] + "clips.dat", "r")
         vidsContent = vidsDat.read()
         mp3Content = mp3Dat.read()
         clipsContent = clipsDat.read()
@@ -96,30 +96,30 @@ def ReadLists(config, vidsList, mp3List, clipsList):
         mp3Dat.close()
         clipsDat.close()
         # Delete locks
-        os.remove("vids.lock")
-        os.remove("mp3.lock")
-        os.remove("clips.lock")
+        os.remove(config["root_path"] + "vids.lock")
+        os.remove(config["root_path"] + "mp3.lock")
+        os.remove(config["root_path"] + "clips.lock")
     except:
         print("ERROR: One or more lock file exist for vids.dat, mp3.dat, clips.dat. Most likely these files are being written at the moment. Files can not be opened. ReadLists() will skip.")
-        os.remove("vids.lock")
-        os.remove("mp3.lock")
-        os.remove("clips.lock")
+        os.remove(config["root_path"] + "vids.lock")
+        os.remove(config["root_path"] + "mp3.lock")
+        os.remove(config["root_path"] + "clips.lock")
 
 
 def WriteConfig(config):
     try:
         # Lock file can not exist
-        assert not (os.path.isfile("config.lock"))
+        assert not (os.path.isfile(config["root_path"] + "config.lock"))
         # Create lock
-        lock = open("config.lock", "w")
+        lock = open(config["root_path"] + "config.lock", "w")
         lock.close()
         # Open config file, save config object to file
-        configFile = open("config.conf", "w")
+        configFile = open(config["root_path"] + "config.conf", "w")
         for key in config:
             configFile.write(key + " = " + str(config[key]) + "\n")
         configFile.close()
         # Delete lock
-        os.remove("config.lock")
+        os.remove(config["root_path"] + "config.lock")
         return True
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (config.conf)")
@@ -132,66 +132,66 @@ def WriteLists(config, vidsList, mp3List, clipsList):
     # Write vids
     try:
         # Lock file can not exist
-        assert not (os.path.isfile("vids.lock"))
+        assert not (os.path.isfile(config["root_path"] + "vids.lock"))
         # Createe lock
-        lock = open("vids.lock", "w")
+        lock = open(config["root_path"] + "vids.lock", "w")
         lock.close()
         # Open vids.dat file, overwrite content
-        vidsFile = open("vids.dat", "w")
+        vidsFile = open(config["root_path"] + "vids.dat", "w")
         for key in vidsList:
             vidsFile.write(key + "\t" + str(vidsList[key]) + "\n")
         vidsFile.close()
         # Delete lock
-        os.remove("vids.lock")
+        os.remove(config["root_path"] + "vids.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (vids.dat)")
-        os.remove("vids.lock")
+        os.remove(config["root_path"] + "vids.lock")
         allSuccessfull = False
 
     # Write mp3
     try:
         # Lock file can not exist
-        assert not (os.path.isfile("mp3.lock"))
+        assert not (os.path.isfile(config["root_path"] + "mp3.lock"))
         # Createe lock
-        lock = open("mp3.lock", "w")
+        lock = open(config["root_path"] + "mp3.lock", "w")
         lock.close()
         # Open mp3.dat file, overwrite content
-        mp3File = open("mp3.dat", "w")
+        mp3File = open(config["root_path"] + "mp3.dat", "w")
         for key in mp3List:
             mp3File.write(key + "\t" + str(mp3List[key]) + "\n")
         mp3File.close()
         # Delete lock
-        os.remove("mp3.lock")
+        os.remove(config["root_path"] + "mp3.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (mp3.dat)")
-        os.remove("mp3.lock")
+        os.remove(config["root_path"] + "mp3.lock")
         allSuccessfull = False
 
     # Write clips
     try:
         # Lock file can not exist
-        assert not (os.path.isfile("clips.lock"))
+        assert not (os.path.isfile(config["root_path"] + "clips.lock"))
         # Createe lock
-        lock = open("clips.lock", "w")
+        lock = open(config["root_path"] + "clips.lock", "w")
         lock.close()
         # Open clips.dat file, overwrite content
         print("What is the content of clipsList?")
         print(clipsList)
-        clipsFile = open("clips.dat", "w")
+        clipsFile = open(config["root_path"] + "clips.dat", "w")
         for key in clipsList:
             clipsFile.write(key + "\t" + clipsList[key] + "\n")
         clipsFile.close()
         # Delete lock
-        os.remove("clips.lock")
+        os.remove(config["root_path"] + "clips.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (clips.dat)")
-        os.remove("clips.lock")
+        os.remove(config["root_path"] + "clips.lock")
         allSuccessfull = False
     return allSuccessfull
 
 def CheckNewFiles(config, vidsList, mp3List):
     # Log file
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     # Scan the folders for files
@@ -203,10 +203,10 @@ def CheckNewFiles(config, vidsList, mp3List):
     isMp3FileOpen = False
     # Only open files if there are new elements.
     if len(currentVids) != len(vidsList):
-        vidsDat = open("vids.dat", "a")
+        vidsDat = open(config["root_path"] + "vids.dat", "a")
         isVidsFileOpen = True
     if len(currentMp3) != len(mp3List):
-        mp3Dat = open("mp3.dat", "a")
+        mp3Dat = open(config["root_path"] + "mp3.dat", "a")
         isMp3FileOpen = True
 
     # Decide which files are new

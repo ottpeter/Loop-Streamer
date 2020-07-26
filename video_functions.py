@@ -10,7 +10,7 @@ import random
 
 # This function is running in background, on another thread
 def StartClip(config, clipsList):
-    log = open("logs/stream.log", "a")
+    log = open(config["root_path"] + "logs/stream.log", "a")
 
     print(len(clipsList))
     # If there are no rendered videos yet, we can't stream anything
@@ -45,7 +45,7 @@ def StartClip(config, clipsList):
 # Select mp3
 def SelectMp3(mp3List, config):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     try:
@@ -54,6 +54,7 @@ def SelectMp3(mp3List, config):
         for entry in mp3List:
             if mp3List[entry] <= lowestRenderCount:
                 selectedMp3 = entry
+                lowestRenderCount = mp3List[entry]
             elif mp3List[entry] == 0:
                 # Value can't be lower than this, this is a new entry
                 selectedMp3 = entry
@@ -72,7 +73,7 @@ def SelectMp3(mp3List, config):
 # Resize image
 def ResizeImage(image_path, config):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     try:
@@ -100,7 +101,7 @@ def ResizeImage(image_path, config):
 
 def sortVidsList(clipLength, inputList, config, slideLen, selectedVids):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     allVidsDuration = 0.0
@@ -142,7 +143,7 @@ def sortVidsList(clipLength, inputList, config, slideLen, selectedVids):
 
 def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
 
@@ -197,7 +198,7 @@ def CreateText():
 
 def FinalClip(paths, mp3File, clipLength, config):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     try:
@@ -241,7 +242,7 @@ def FinalClip(paths, mp3File, clipLength, config):
 # Write the final MP4
 def WriteClip(theClip, fps, preset, threads, config):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     try:
@@ -262,7 +263,7 @@ def WriteClip(theClip, fps, preset, threads, config):
 # Increment render counts for all elements, but only after rendering was successful
 def SaveChanges(selectedVids, selectedMp3, vidsList, mp3List, clipsList, config):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     try:
@@ -290,7 +291,7 @@ def SaveChanges(selectedVids, selectedMp3, vidsList, mp3List, clipsList, config)
 # Create a new clip, using 1 mp3 file and multiple pictures and videos
 def CreateClip(config, vidsList, mp3List, clipsList):
     # Log
-    mainLog = open("logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     # If render is successful, we increment render count for all participating elements
