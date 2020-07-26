@@ -1,6 +1,6 @@
 import os
 import datetime
-
+import contextlib
 
 def ReadConfig(config):
     try:
@@ -37,7 +37,8 @@ def ReadConfig(config):
         os.remove(config["root_path"] + "config.lock")
     except:
         print("ERROR: Lock file exists. File can not be opened. (config.conf)")
-        os.remove(config["root_path"] + "config.lock")
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(config["root_path"] + "config.lock")
 
 
 def ReadLists(config, vidsList, mp3List, clipsList):
@@ -101,9 +102,10 @@ def ReadLists(config, vidsList, mp3List, clipsList):
         os.remove(config["root_path"] + "clips.lock")
     except:
         print("ERROR: One or more lock file exist for vids.dat, mp3.dat, clips.dat. Most likely these files are being written at the moment. Files can not be opened. ReadLists() will skip.")
-        os.remove(config["root_path"] + "vids.lock")
-        os.remove(config["root_path"] + "mp3.lock")
-        os.remove(config["root_path"] + "clips.lock")
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(config["root_path"] + "vids.lock")
+            os.remove(config["root_path"] + "mp3.lock")
+            os.remove(config["root_path"] + "clips.lock")
 
 
 def WriteConfig(config):
@@ -145,7 +147,8 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove(config["root_path"] + "vids.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (vids.dat)")
-        os.remove(config["root_path"] + "vids.lock")
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(config["root_path"] + "vids.lock")
         allSuccessfull = False
 
     # Write mp3
@@ -164,7 +167,8 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove(config["root_path"] + "mp3.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (mp3.dat)")
-        os.remove(config["root_path"] + "mp3.lock")
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(config["root_path"] + "mp3.lock")
         allSuccessfull = False
 
     # Write clips
@@ -185,7 +189,8 @@ def WriteLists(config, vidsList, mp3List, clipsList):
         os.remove(config["root_path"] + "clips.lock")
     except:
         print("ERROR: Lock file exists. Changes were not written to prevent data loss. (clips.dat)")
-        os.remove(config["root_path"] + "clips.lock")
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(config["root_path"] + "clips.lock")
         allSuccessfull = False
     return allSuccessfull
 
