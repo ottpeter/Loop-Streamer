@@ -151,8 +151,8 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
         # Create temporary clips from the images
         i = 0
         # Purge the temp directory (delete and recreate)
-        shutil.rmtree("temp_img_clips")
-        os.mkdir("./temp_img_clips")
+        shutil.rmtree(config["root_path"] + "temp_img_clips")
+        os.mkdir(config["root_path"] + "temp_img_clips")
         # We need this, because we can't override selectedVids, we need selectedVids to increment render count in the end
         actualPaths = theVids.copy()
         for img in theVids:
@@ -160,10 +160,10 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
                     ".png") or img.endswith(".PNG"):
                 # Create temporary resized image
                 ResizeImage(img, config)
-                myImgClip = ImageClip("temp.jpg")
+                myImgClip = ImageClip(config["root_path"] + "temp.jpg")
                 # Set duration
                 myImgClip.duration = int(config["image_slideshow_length"])
-                newpath = "./temp_img_clips/" + str(i) + ".mp4"
+                newpath = config["root_path"] + "/temp_img_clips/" + str(i) + ".mp4"
                 # Start rendering
                 myImgClip.write_videofile(newpath, fps, preset=preset, threads=threads, write_logfile=True)
                 # Replace the path in the selectedVids array
