@@ -197,6 +197,8 @@ def CreateText(config):
 
     # Create empty image, get size from config
     image = Image.new('RGBA', (config["clip_width"], config["clip_height"]), (0, 0, 0, 0))
+    logo = Image.open(config["root_path"] + "logo.png")
+    logo = logo.resize((80, 80))
     # Create draw object
     draw = ImageDraw.Draw(image, "RGBA")
     # Set font. Second parameter is font size
@@ -204,6 +206,7 @@ def CreateText(config):
     # Write on transparent image
     draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.75)), sampleText1, fill=(0, 0, 80, 255), font=font)
     draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.85)), sampleText2, fill=(0, 0, 80, 255), font=font)
+    image.paste(logo, (int(config["clip_width"]*0.92), int(config["clip_height"]*0.03)))
     #draw.text((50,50), "hello", fill=(20, 20, 255, 255), font=font)
     # Save image
     image.save("text_layer.png", "PNG")
