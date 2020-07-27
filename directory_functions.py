@@ -102,7 +102,7 @@ def ReadLists(config, vidsList, mp3List, clipsList):
         os.remove(config["root_path"] + "clips.lock")
     except:
         print("ERROR: One or more lock file exist for vids.dat, mp3.dat, clips.dat. Most likely these files are being written at the moment. Files can not be opened. ReadLists() will skip.")
-        with contextlib.suppress(FileNotFoundError):
+        with f:
             os.remove(config["root_path"] + "vids.lock")
             os.remove(config["root_path"] + "mp3.lock")
             os.remove(config["root_path"] + "clips.lock")
