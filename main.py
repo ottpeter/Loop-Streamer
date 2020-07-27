@@ -20,7 +20,7 @@ config = {
     "next_clip_to_create": 0,
     # How many seconds an image should be shown in slideshow (this won't affect already rendered clips)
     "image_slideshow_length": 10,
-    "root_path": "/root/Loop-Streamer/"
+    "root_path": "/home/user/Loop-Streamer/"
 }
 
 # Dictionary that contains the file names of videos & pictures

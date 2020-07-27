@@ -4,13 +4,19 @@ from moviepy.editor import *
 from directory_functions import *
 from time import sleep
 import datetime
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import threading
 import random
+from moviepy.config import get_setting
 
 # This function is running in background, on another thread
 def StartClip(config, clipsList):
     log = open(config["root_path"] + "logs/stream.log", "a")
+
+    # DEACTIVATE
+    print("StartClip is deactivated")
+    sleep(900)
+
 
     print(len(clipsList))
     # If there are no rendered videos yet, we can't stream anything
@@ -180,21 +186,34 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
     mainLog.close()
 
 
-def CreateText():
+def CreateText(config):
     print("we will create the text layer here")
-    '''
+
     # Create text
     # We could get mp3 name from meta tag (if exists)
-    text = TextClip(
-        "example",
-        size="22",
-        color="black",
-        bg_color="transparent",
-        fontsize=32,
-        font="Courier",
-        align="bottom")
-    clipWithoutAudio = CompositeVideoClip(clipWithoutAudio, text)
-    '''
+
+    sampleText1 = "Hello World!"
+    sampleText2 = "Szia!  :) "
+
+    # Create empty image, get size from config
+    image = Image.new('RGBA', (config["clip_width"], config["clip_height"]), (0, 0, 0, 0))
+    # Create draw object
+    draw = ImageDraw.Draw(image, "RGBA")
+    # Set font. Second parameter is font size
+    font = ImageFont.truetype("impact.ttf", 40)
+    # Write on transparent image
+    draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.75)), sampleText1, fill=(0, 0, 80, 255), font=font)
+    draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.85)), sampleText2, fill=(0, 0, 80, 255), font=font)
+    #draw.text((50,50), "hello", fill=(20, 20, 255, 255), font=font)
+    # Save image
+    image.save("text_layer.png", "PNG")
+
+    # try .. catch
+
+
+    # TextClip() is not working, it is a known issue
+    return 0
+
 
 
 def FinalClip(paths, mp3File, clipLength, config):
@@ -230,9 +249,11 @@ def FinalClip(paths, mp3File, clipLength, config):
         # Concatenating video clips (that are already clip objects)
         # Without method="compose", result mp4 wouldn't play, because of different screen resolutions
         clipWithoutAudio = concatenate_videoclips(clips, method="compose")
-        clipWithoutAudio.duration = clipLength
+        text = ImageClip(config["root_path"] + "text_layer.png")
+        clipWithText = CompositeVideoClip([clipWithoutAudio, text])
+        clipWithText.duration = clipLength
 
-        finalClip = clipWithoutAudio.set_audio(AudioFileClip(config["mp3_path"] + mp3File))
+        finalClip = clipWithText.set_audio(AudioFileClip(config["mp3_path"] + mp3File))
         mainLog.write(now + " Final clip created\n")
         mainLog.close()
         return finalClip
@@ -309,6 +330,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     #slideLen = config["image_slideshow_length"]
     # Set environment variable
     os.environ["IMAGEIO_FFMPEG_EXE"] = config["ffmpeg_path"]
+    os.environ["IMAGEMAGICK_BINARY"] = config["magick_path"]
     # Set FPS
     fps = 25
     # Can be ultrafast / superfast / veryfast / faster / fast / medium / slow / slower / veryslow /placebo
@@ -342,9 +364,9 @@ def CreateClip(config, vidsList, mp3List, clipsList):
     mainLog.flush()
     actualPaths = CreateTempClipsFromImages(selectedVids, fps, preset, threads, config)
 
-    # Create text clip
+    # Create text img
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
-    CreateText()
+    CreateText(config)
 
     # Create the final clip object
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
