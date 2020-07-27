@@ -15,3 +15,6 @@ $ pip3 install moviepy
 
 
 Timezone on the server needs to be set, see [this manual](https://linuxize.com/post/how-to-set-or-change-timezone-on-debian-10/).
+
+Need to download nginx with RTMP module, and create a service for it (the original nginx service needs to be deactivated)
+

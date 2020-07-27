@@ -181,7 +181,7 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
 
 
 def CreateText():
-    print("nothing")
+    print("we will create the text layer here")
     '''
     # Create text
     # We could get mp3 name from meta tag (if exists)
