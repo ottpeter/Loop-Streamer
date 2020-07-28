@@ -9,17 +9,30 @@ from directory_functions import *
 from video_functions import *
 from remove_locks import RemoveLocks
 
-
 # Dictionary that contains configuration parameters
+# Will be overwritten by the config.conf configuration file.
 config = {
-    "vids_path": "",
-    "mp3_path": "",
-    "clips_path": "",
+    "vids_path": "/home/vids/",
+    "mp3_path": "/home/mp3/",
+    "clips_path": "/home/clips/",
     "empty_time": 0,
     "next_clip_to_play": 0,
     "next_clip_to_create": 0,
     # How many seconds an image should be shown in slideshow (this won't affect already rendered clips)
     "image_slideshow_length": 10,
+    "streaming_minrate": "0.5M",
+    "streaming_bufsize": "2M",
+    "streaming_maxrate": "4M",
+    "rendering": "on",
+    "preset": "medium",
+    "render_threads": 4,
+    "play_threads": 4,
+    "clip_per_mp3": 1,
+    "render_start": "00:00",
+    "render_stop": "23:59",
+    "clip_width": 1280,
+    "clip_height": 720,
+    "ffmpeg_path": "/usr/bin/ffmpeg",
     "root_path": "/home/user/Loop-Streamer/"
 }
 
@@ -54,7 +67,8 @@ def Init():
     # Read the files where we keep already scanned vids&mp3s, put them in arrays
     # LOG
 
-    config["root_path"] = sys.argv[1]
+    if len(sys.argv) > 1:
+        config["root_path"] = sys.argv[1]
     ReadConfig(config)
     ReadLists(config, vids, mp3, clips)
     CheckNewFiles(config, vids, mp3)

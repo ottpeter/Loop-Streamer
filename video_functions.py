@@ -22,7 +22,7 @@ def StartClip(config, clipsList):
         return 1
     else:
         # This is the command that we are running
-        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -minrate 0.5M -bufsize 2M -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
+        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -minrate 0.5M -bufsize 2M -vprofile baseline -g 30 -acodec aac -tune zerolatency -strict -2 -f flv rtmp://localhost/show/
 
         t = threading.current_thread()
         while getattr(t, "loop", True):
@@ -38,7 +38,7 @@ def StartClip(config, clipsList):
             subprocess.run(
                 (["ffmpeg", "-re", "-i", fileToPlay,
                   "-vcodec", "libx264", "-preset", "ultrafast", "-maxrate", config["streaming_maxrate"], "-minrate", config["streaming_minrate"], "-bufsize", config["streaming_bufsize"], "-vprofile",
-                  "baseline", "-g", "30", "-acodec", "aac", "-strict", "-2", "-f", "flv",
+                  "baseline", "-g", "30", "-acodec", "aac", "-tune", "zerolatency", "-strict", "-2", "-f", "flv",
                   "rtmp://localhost/show/"]))
             # ffmpeg will simply exit when done. Then we start a new stream
         log.write(str(datetime.datetime.now()).rsplit(".", 1)[0] + " Term signal received. Loop has stopped\n")
@@ -170,7 +170,7 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
                 # Replace the path in the selectedVids array
                 actualPaths[actualPaths.index(img)] = newpath
                 # Delete temp img
-                os.remove("temp.jpg")
+                os.remove(config["root_path"] + "temp.jpg")
                 i += 1
         mainLog.write(now + " All temporary mp4 files created successfully.\n")
         return actualPaths
