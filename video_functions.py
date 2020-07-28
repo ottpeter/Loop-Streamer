@@ -22,7 +22,7 @@ def StartClip(config, clipsList):
         return 1
     else:
         # This is the command that we are running
-        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -minrate 0.5M -bufsize 2M -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://localhost/show/
+        # ffmpeg -re -i example-vid.mp4 -vcodec libx264 -preset ultrafast -maxrate 4M -minrate 0.5M -bufsize 2M -vprofile baseline -g 30 -acodec aac -tune zerolatency -strict -2 -f flv rtmp://localhost/show/
 
         t = threading.current_thread()
         while getattr(t, "loop", True):

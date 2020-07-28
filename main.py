@@ -9,7 +9,6 @@ from directory_functions import *
 from video_functions import *
 from remove_locks import RemoveLocks
 
-
 # Dictionary that contains configuration parameters
 # Will be overwritten by the config.conf configuration file.
 config = {
