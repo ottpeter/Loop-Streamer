@@ -93,8 +93,8 @@ def ResizeImage(image_path, config):
             size = int(config["clip_width"] * res_ratio), config["clip_height"]
 
         img_resized = img.resize(size, Image.ANTIALIAS)
-        img_resized.save("temp.jpg", "JPEG")
-        #mainLog.write(now + " Image resized successfully.\n")
+        img_resized.save(config["root_path"] + "temp.jpg", "JPEG")
+        mainLog.write(now + " Image resized successfully.\n")
     except:
         mainLog.write(now + " There was an error while resizing the image. image_path: " + image_path + "\n")
 
@@ -147,12 +147,12 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
     mainLog = open(config["root_path"] + "logs/main.log", "a")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
-
     try:
         # Create temporary clips from the images
         i = 0
         # Purge the temp directory (delete and recreate)
-        shutil.rmtree(config["root_path"] + "temp_img_clips")
+        with contextlib.suppress(FileNotFoundError):
+            shutil.rmtree(config["root_path"] + "temp_img_clips")
         os.mkdir(config["root_path"] + "temp_img_clips")
         # We need this, because we can't override selectedVids, we need selectedVids to increment render count in the end
         actualPaths = theVids.copy()
@@ -164,7 +164,7 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
                 myImgClip = ImageClip(config["root_path"] + "temp.jpg")
                 # Set duration
                 myImgClip.duration = int(config["image_slideshow_length"])
-                newpath = config["root_path"] + "/temp_img_clips/" + str(i) + ".mp4"
+                newpath = config["root_path"] + "temp_img_clips/" + str(i) + ".mp4"
                 # Start rendering
                 myImgClip.write_videofile(newpath, fps, preset=preset, threads=threads, write_logfile=True)
                 # Replace the path in the selectedVids array
