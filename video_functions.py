@@ -13,11 +13,6 @@ from moviepy.config import get_setting
 def StartClip(config, clipsList):
     log = open(config["root_path"] + "logs/stream.log", "a")
 
-    # DEACTIVATE
-    print("StartClip is deactivated")
-    sleep(900)
-
-
     print(len(clipsList))
     # If there are no rendered videos yet, we can't stream anything
     if len(clipsList) == 0:
@@ -100,7 +95,7 @@ def ResizeImage(image_path, config):
 
         img_resized = img.resize(size, Image.ANTIALIAS)
         img_resized.save(config["root_path"] + "temp.jpg", "JPEG")
-        mainLog.write(now + " Image resized successfully.\n")
+        #mainLog.write(now + " Image resized successfully.\n")
     except:
         mainLog.write(now + " There was an error while resizing the image. image_path: " + image_path + "\n")
 
@@ -202,14 +197,14 @@ def CreateText(config):
     # Create draw object
     draw = ImageDraw.Draw(image, "RGBA")
     # Set font. Second parameter is font size
-    font = ImageFont.truetype("impact.ttf", 40)
+    font = ImageFont.truetype(config["root_path"] + "impact.ttf", 40)
     # Write on transparent image
     draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.75)), sampleText1, fill=(0, 0, 80, 255), font=font)
     draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.85)), sampleText2, fill=(0, 0, 80, 255), font=font)
     image.paste(logo, (int(config["clip_width"]*0.92), int(config["clip_height"]*0.03)))
     #draw.text((50,50), "hello", fill=(20, 20, 255, 255), font=font)
     # Save image
-    image.save("text_layer.png", "PNG")
+    image.save(config["root_path"] + "text_layer.png", "PNG")
 
     # try .. catch
 
