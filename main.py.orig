@@ -20,6 +20,7 @@ config = {
     "next_clip_to_create": 0,
     # How many seconds an image should be shown in slideshow (this won't affect already rendered clips)
     "image_slideshow_length": 10,
+<<<<<<< HEAD
     "streaming_minrate": "0.5M",
     "streaming_bufsize": "2M",
     "streaming_maxrate": "4M",
@@ -33,6 +34,8 @@ config = {
     "clip_width": 1280,
     "clip_height": 720,
     "ffmpeg_path": "/usr/bin/ffmpeg",
+=======
+>>>>>>> text
     "root_path": "/home/user/Loop-Streamer/"
 }
 
