@@ -11,9 +11,12 @@ COPY . /app
 #VOLUME [ "/home/data" ]
 
 # Install nginx...
-WORKDIR /app/nginx-1.18.0
+WORKDIR /app/
 # Install all dependencies
 RUN apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlibc zlib1g zlib1g-dev python3.5 python3-pip ffmpeg
+
+RUN tar xvfz nginx-1.18.0.tar.gz
+WORKDIR /app/nginx-1.18.0/
 RUN ./configure --with-http_ssl_module --add-module=nginx-rtmp-module/
 RUN make
 RUN make install

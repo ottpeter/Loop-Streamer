@@ -140,4 +140,4 @@ logs/main.log
 logs/stream.log
 
 #nginx folder has to be included, all of the files!
-!nginx-1.18.0/*
+nginx-1.18.0/*
