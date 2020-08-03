@@ -74,7 +74,8 @@ def Init():
     CheckNewFiles(config, vids, mp3)
     # First we start serving already existing clips with ffmpeg
     # We will start StartClip in a background process. It will loop existing videos
-    backgroundThread.start()
+    if config["streaming"] == "on":
+        backgroundThread.start()
     # Testing only
     # ResizeImage("/home/user/Downloads/vids/assorted-books-on-green-wooden-chair-3494936.jpg", config)
 
@@ -97,7 +98,7 @@ def Core():
     stop_rendering = datetime.datetime.strptime(config["render_stop"], "%H:%M")
     # It will be 1900 Jan 1 and given time
     mainLog.write(now + " Entering Core loop...\n")
-    if backgroundThread.is_alive():
+    if config["streaming"] == "on" and backgroundThread.is_alive():
         mainLog.write(now + " StartClip loop is running\n")
         mainLog.flush()
     else:
