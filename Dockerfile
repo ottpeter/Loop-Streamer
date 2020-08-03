@@ -28,7 +28,7 @@ COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 RUN pip3 install moviepy
 
 # Create logs directory
-RUN mkdir -p /app/logs
+RUN mkdir -p /home/logs
 
 # Start app
 #ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
