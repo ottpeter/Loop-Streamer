@@ -16,7 +16,7 @@ WORKDIR /app/
 RUN apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlibc zlib1g zlib1g-dev python3.5 python3-pip ffmpeg
 
 RUN tar xvfz nginx-1.18.0.tar.gz
-#RUN mkdir /app/nginx-1.18.0/nginx-rtmp-module
+RUN mkdir -p /app/nginx-1.18.0/nginx-rtmp-module
 RUN mv /app/nginx-rtmp-module/* /app/nginx-1.18.0/nginx-rtmp-module
 WORKDIR /app/nginx-1.18.0/
 RUN ./configure --with-http_ssl_module --add-module=nginx-rtmp-module/
@@ -26,6 +26,9 @@ COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Install moviepy
 RUN pip3 install moviepy
+
+# Create logs directory
+RUN mkdir -p /app/logs
 
 # Start app
 #ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
