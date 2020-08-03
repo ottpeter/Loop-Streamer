@@ -196,7 +196,7 @@ def WriteLists(config, vidsList, mp3List, clipsList):
 
 def CheckNewFiles(config, vidsList, mp3List):
     # Log file
-    mainLog = open(config["root_path"] + "logs/main.log", "a")
+    mainLog = open(config["root_path"] + "logs/main.log", "a+")
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
 
     # Scan the folders for files
@@ -208,10 +208,10 @@ def CheckNewFiles(config, vidsList, mp3List):
     isMp3FileOpen = False
     # Only open files if there are new elements.
     if len(currentVids) != len(vidsList):
-        vidsDat = open(config["root_path"] + "vids.dat", "a")
+        vidsDat = open(config["root_path"] + "vids.dat", "a+")
         isVidsFileOpen = True
     if len(currentMp3) != len(mp3List):
-        mp3Dat = open(config["root_path"] + "mp3.dat", "a")
+        mp3Dat = open(config["root_path"] + "mp3.dat", "a+")
         isMp3FileOpen = True
 
     # Decide which files are new
