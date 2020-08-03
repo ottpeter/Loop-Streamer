@@ -17,15 +17,16 @@ RUN apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlibc zl
 RUN ./configure --with-http_ssl_module --add-module=nginx-rtmp-module/
 RUN make
 RUN make install
+COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Install moviepy
 RUN pip3 install moviepy
 
 # Start app
-ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
+#ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
 WORKDIR /app
-ENTRYPOINT ["python3.5", "main.py", "/app"]
-#ENTRYPOINT ["/app/main.py"]
+#ENTRYPOINT ["python3.5", "main.py", "/app/"]
+ENTRYPOINT ["/app/start.sh"]
 
 # We need to start the script
 EXPOSE 1935
