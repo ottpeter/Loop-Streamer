@@ -139,5 +139,7 @@ logs/stream_err/*
 logs/main.log
 logs/stream.log
 
-#nginx folder has to be included, all of the files!
+# nginx folder has to be included, all of the files!
 nginx-1.18.0/*
+# Include everything from this folder
+!nginx-rtml-module/*
