@@ -11,10 +11,10 @@ WORKDIR /app
 #VOLUME [ "/home/test" ]
 #VOLUME [ "/home/data" ]
 # Install nginx...
-WORKDIR /app/nginx-rtmp-module
-RUN ./configure --with-http_ssl_module --add-module=nginx-rtmp-module/
-RUN make
-RUN make install
+RUN cd /app/nginx-rtmp-module \
+    && ./configure --with-http_ssl_module --add-module=nginx-rtmp-module/ \
+    && make \
+    && make install
 RUN /usr/local/nginx/sbin/nginx
 # NGINX need to run
 # We need to start the script
