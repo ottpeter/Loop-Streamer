@@ -24,6 +24,7 @@ config = {
     "streaming_bufsize": "2M",
     "streaming_maxrate": "4M",
     "rendering": "on",
+    "streaming": "on",
     "preset": "medium",
     "render_threads": 4,
     "play_threads": 4,
