@@ -1,6 +1,0 @@
-while true
-do
-echo "Restarting script..."
-./myserver
-sleep 1
-done
