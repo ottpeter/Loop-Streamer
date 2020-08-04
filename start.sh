@@ -1,7 +1,7 @@
 #!/bin/sh
-# This command needs to point to the 'home' folder. Now home folder is 'app'
+# This command needs to point to the 'home' folder. Now home folder is '/home'
 # Change this to desired location.
-script='/app/main.py /app/'
+script='/app/main.py /home/'
 
 # Remove locks
 /usr/bin/python3 /app/remove_locks.py
