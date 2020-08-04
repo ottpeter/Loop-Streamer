@@ -181,14 +181,13 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
     mainLog.close()
 
 
-def CreateText(config):
+def CreateText(config, selectedMp3):
     print("we will create the text layer here")
 
     # Create text
     # We could get mp3 name from meta tag (if exists)
 
-    sampleText1 = "Hello World!"
-    sampleText2 = "Szia!  :) "
+    musicName = os.path.splitext(selectedMp3)[0]
 
     # Create empty image, get size from config
     image = Image.new('RGBA', (config["clip_width"], config["clip_height"]), (0, 0, 0, 0))
@@ -199,8 +198,8 @@ def CreateText(config):
     # Set font. Second parameter is font size
     font = ImageFont.truetype(config["root_path"] + "font.ttf", 40)
     # Write on transparent image
-    draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.75)), sampleText1, fill=(0, 0, 80, 255), font=font)
-    draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.85)), sampleText2, fill=(0, 0, 80, 255), font=font)
+    #draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.75)), sampleText1, fill=(0, 0, 80, 255), font=font)
+    draw.text((int(config["clip_width"]*0.05), int(config["clip_height"]*0.85)), musicName, fill=(0, 0, 80, 255), font=font)
     image.paste(logo, (int(config["clip_width"]*0.92), int(config["clip_height"]*0.03)))
     #draw.text((50,50), "hello", fill=(20, 20, 255, 255), font=font)
     # Save image
@@ -365,7 +364,7 @@ def CreateClip(config, vidsList, mp3List, clipsList):
 
     # Create text img
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]
-    CreateText(config)
+    CreateText(config, selectedMp3)
 
     # Create the final clip object
     now = str(datetime.datetime.now()).rsplit(".", 1)[0]

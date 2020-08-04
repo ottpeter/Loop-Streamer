@@ -1,4 +1,6 @@
 #!/bin/sh
+# This command needs to point to the 'home' folder. Now home folder is 'app'
+# Change this to desired location.
 script='/app/main.py /app/'
 
 # Remove locks

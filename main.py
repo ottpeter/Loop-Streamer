@@ -99,20 +99,21 @@ def Core():
     stop_rendering = datetime.datetime.strptime(config["render_stop"], "%H:%M")
     # It will be 1900 Jan 1 and given time
     mainLog.write(now + " Entering Core loop...\n")
-    if config["streaming"] == "on" and backgroundThread.is_alive():
-        mainLog.write(now + " StartClip loop is running\n")
-        mainLog.flush()
-    else:
-        mainLog.write(now + " StartClip loop stopped unexpectedly. Restarting StartClip...\n")
-        backgroundThread = None
-        backgroundThread = threading.Thread(target=StartClip, args=[config, clips])
-        backgroundThread.start()
-        mainLog.flush()
+    if config["streaming"] == "on":
         if backgroundThread.is_alive():
-            now = str(datetime.datetime.now()).rsplit(".", 1)[0]
-            mainLog.write(now + " StartClip loop is now running!\n")
+            mainLog.write(now + " StartClip loop is running\n")
+            mainLog.flush()
         else:
-            mainLog.write(now + " Couldn't restart StartClip.\n")
+            mainLog.write(now + " StartClip loop stopped unexpectedly. Restarting StartClip...\n")
+            backgroundThread = None
+            backgroundThread = threading.Thread(target=StartClip, args=[config, clips])
+            backgroundThread.start()
+            mainLog.flush()
+            if backgroundThread.is_alive():
+                now = str(datetime.datetime.now()).rsplit(".", 1)[0]
+                mainLog.write(now + " StartClip loop is now running!\n")
+            else:
+                mainLog.write(now + " Couldn't restart StartClip.\n")
     mainLog.flush()
 
     mainLog.write(now + " Checking new files...\n")

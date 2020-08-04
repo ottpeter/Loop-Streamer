@@ -73,20 +73,20 @@ def ReadLists(config, vidsList, mp3List, clipsList):
             if "\t" in line:
                 vidsList[line.split("\t")[0]] = int(line.split("\t")[1])
             else:
-                print("This line is not processable (from vids.dat")
+                print("This line is not processable (from vids.dat)")
         # Processing the mp3 file content. File name and render-number is separated by TAB
         for line in mp3Lines:
             if "\t" in line:
                 mp3List[line.split("\t")[0]] = int(line.split("\t")[1])
             else:
-                print("This line is not processable (from mp3.dat")
+                print("This line is not processable (from mp3.dat)")
 
         # Processing the clips file content. File name and name of mp3 is separated by TAB
         for line in clipsLines:
             if "\t" in line:
                 clipsList[line.split("\t")[0]] = line.split("\t")[1]
             else:
-                print("This line is not processable (from clips.dat")
+                print("This line is not processable (from clips.dat)")
 
         # At this point, we should have the file contents stored in 3 dictionaries
         print("At this point, we should have the file contents stored in 3 dictionaries")
