@@ -197,10 +197,14 @@ def CreateText(config, selectedMp3):
         # Create draw object
         draw = ImageDraw.Draw(image, "RGBA")
         # Set font. Second parameter is font size
-        font = ImageFont.truetype(config["root_path"] + "font.ttf", 40)
+        font = ImageFont.truetype(config["root_path"] + "font.ttf", config["font_size"])
         # Write on transparent image
+        red = config["font_color_rgba"].split(",")[0]
+        green = config["font_color_rgba"].split(",")[1]
+        blue = config["font_color_rgba"].split(",")[2]
+        alpha = config["font_color_rgba"].split(",")[3]
         draw.text((int(config["clip_width"] * 0.05), int(config["clip_height"] * 0.85)), musicName,
-                  fill=(0, 0, 80, 255), font=font)
+                  fill=(red, green, blue, alpha), font=font)
         # If logo exists, insert logo
         if os.path.isfile(config["root_path"] + "logo.png"):
             logo = Image.open(config["root_path"] + "logo.png")
