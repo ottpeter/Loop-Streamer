@@ -21,3 +21,5 @@ rendering = on
 streaming = on
 vids_path = /home/vids/
 render_start = 00:00
+font_size = 40
+font_color_rgba = 0,0,80,255
