@@ -216,8 +216,9 @@ def CheckNewFiles(config, vidsList, mp3List):
 
     # Decide which files are new
     for entry in currentVids:
-        if entry in vidsList:
+        if entry in vidsList or entry == ".gitkeep":
             # We don't need to do anything, file already is on our list
+            # If we find ".gitkeep", we skip
             continue
         else:
             # New video has been rendered 0 times in clips
@@ -226,8 +227,9 @@ def CheckNewFiles(config, vidsList, mp3List):
             vidsDat.write(entry + "\t" + "0\n")
 
     for entry in currentMp3:
-        if entry in mp3List:
+        if entry in mp3List or entry == ".gitkeep":
             # We don't need to do anything, file already is on our list
+            # If we find ".gitkeep", we skip
             continue
         else:
             # New video has been rendered 0 times in clips
