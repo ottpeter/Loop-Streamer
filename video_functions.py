@@ -199,10 +199,10 @@ def CreateText(config, selectedMp3):
         # Set font. Second parameter is font size
         font = ImageFont.truetype(config["root_path"] + "font.ttf", config["font_size"])
         # Write on transparent image
-        red = config["font_color_rgba"].split(",")[0]
-        green = config["font_color_rgba"].split(",")[1]
-        blue = config["font_color_rgba"].split(",")[2]
-        alpha = config["font_color_rgba"].split(",")[3]
+        red = int(config["font_color_rgba"].split(",")[0])
+        green = int(config["font_color_rgba"].split(",")[1])
+        blue = int(config["font_color_rgba"].split(",")[2])
+        alpha = int(config["font_color_rgba"].split(",")[3])
         draw.text((int(config["clip_width"] * 0.05), int(config["clip_height"] * 0.85)), musicName,
                   fill=(red, green, blue, alpha), font=font)
         # If logo exists, insert logo
