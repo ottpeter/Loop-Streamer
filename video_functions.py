@@ -200,7 +200,7 @@ def CreateText(config, selectedMp3):
         # Create draw object
         draw = ImageDraw.Draw(image, "RGBA")
         # Set font. Second parameter is font size
-        font = ImageFont.truetype(config["root_path"] + "font.ttf", config["font_size"])
+        font = ImageFont.truetype(config["root_path"] + "font.ttf", int(config["font_size"]))
         # Write on transparent image
         red = int(config["font_color_rgba"].split(",")[0])
         green = int(config["font_color_rgba"].split(",")[1])
