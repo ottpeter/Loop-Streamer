@@ -69,8 +69,8 @@ def SelectMp3(mp3List, config):
         else:
             mainLog.close()
             return "END_RENDERING"
-    except:
-        mainLog.write(now + "There was an error while selecting the mp3.")
+    except Exception as error:
+        mainLog.write(now + "There was an error while selecting the mp3. Error message: " + str(error))
     mainLog.close()
 
 # Resize image
@@ -97,8 +97,9 @@ def ResizeImage(image_path, config):
         img_resized = img.resize(size, Image.ANTIALIAS)
         img_resized.save(config["root_path"] + "temp.jpg", "JPEG")
         #mainLog.write(now + " Image resized successfully.\n")
-    except:
+    except Exception as error:
         mainLog.write(now + " There was an error while resizing the image. image_path: " + image_path + "\n")
+        mainLog.write("Error message: " + str(error) + "\n")
 
     mainLog.close()
 
@@ -138,8 +139,9 @@ def sortVidsList(clipLength, inputList, config, slideLen, selectedVids):
                 index += 1
             else:
                 index = 0
-    except:
+    except Exception as error:
         mainLog.write(now + " There was an error while attempting to sort vidsList by render count. clipLength:" + str(clipLength) + "\n")
+        mainLog.write("Error message: " + str(error) + "\n")
 
     mainLog.close()
 
@@ -176,8 +178,9 @@ def CreateTempClipsFromImages(theVids, fps, preset, threads, config):
                 i += 1
         mainLog.write(now + " All temporary mp4 files created successfully.\n")
         return actualPaths
-    except:
+    except Exception as error:
         mainLog.write(now + " There was an error while attempting to create the temporary mp4 files from the images.\n")
+        mainLog.write("Error message: " + str(error) + "\n")
 
     mainLog.close()
 
@@ -214,8 +217,9 @@ def CreateText(config, selectedMp3):
         # Save image
         image.save(config["root_path"] + "text_layer.png", "PNG")
         mainLog.write(now + " Text layer created successfully.\n")
-    except:
+    except Exception as error:
         mainLog.write(now + " There was an error while creating the text layer.\n")
+        mainLog.write("Error message: " + str(error) + "\n")
 
     mainLog.close()
     return 0
@@ -262,8 +266,9 @@ def FinalClip(paths, mp3File, clipLength, config):
         mainLog.write(now + " Final clip created\n")
         mainLog.close()
         return finalClip
-    except:
+    except Exception as error:
         mainLog.write(now + " There was an error during the creation of the final clip object.\n")
+        mainLog.write("Error message: " + str(error) + "\n")
     mainLog.close()
 
 # Write the final MP4
@@ -283,8 +288,9 @@ def WriteClip(theClip, fps, preset, threads, config):
         mainLog.write(now + " Rendering was successful. Clip name: " + str(config["next_clip_to_create"]) + ".mp4\n")
         mainLog.close()
         return True
-    except:
+    except Exception as error:
         mainLog.write(now + " There was an error while rendering the final MP4 file.\n")
+        mainLog.write("Error message: " + str(error) + "\n")
 
 
 # Increment render counts for all elements, but only after rendering was successful
@@ -308,9 +314,10 @@ def SaveChanges(selectedVids, selectedMp3, vidsList, mp3List, clipsList, config)
         assert WriteLists(config, vidsList, mp3List, clipsList)
         mainLog.write(now + " Changes successfully saved.\n")
         mainLog.close()
-    except:
+    except Exception as error:
         mainLog.write(now + " Couldn't write changes to dat files or the config file. Maybe one of the files is being edited by StartClip.\n")
-        print(" ERROR")
+        mainLog.write("Error message: " + str(error) + "\n")
+        print(" ERROR: " + str(error))
 
 
 
